@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>True Colours — Art Auction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── CONFIG NOTE ──
+   After deploying your Apps Script, paste the URL below.
+   It looks like: https://script.google.com/macros/s/XXXX/exec
+*/
+:root {
+  --ink:    #0F0E0C;
+  --white:  #FAFAF8;
+  --off:    #F3F1EC;
+  --accent: #C8531A;
+  --gold:   #B8922A;
+  --muted:  #6B6560;
+  --border: #E2DED7;
+  --green:  #1A7A4A;
+  --red:    #C8281A;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;font-weight:300;background:var(--white);color:var(--ink);overflow-x:hidden}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(250,250,248,0.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1280px;margin:0 auto;padding:0 48px;height:64px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Libre Baskerville',serif;font-size:1.05rem;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
+.nav-dot{width:7px;height:7px;background:var(--accent);border-radius:50%;flex-shrink:0}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{background:var(--accent);color:white!important;padding:8px 18px;font-weight:500!important;transition:background .2s!important}
+.nav-cta:hover{background:#a84214!important}
+.nav-outline{border:1px solid var(--ink)!important;padding:7px 18px;font-weight:500!important;transition:all .2s!important}
+.nav-outline:hover{background:var(--ink)!important;color:white!important}
+
+/* ── FOUNDER BAR ── */
+.founder-bar{background:var(--off);border-bottom:1px solid var(--border);padding:10px 0;margin-top:64px}
+.founder-bar-inner{max-width:1280px;margin:0 auto;padding:0 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.founder-bar-left{display:flex;align-items:center;gap:10px;font-size:0.76rem;color:var(--muted)}
+.founder-bar-left strong{color:var(--ink)}
+.founder-bar-left a{color:var(--accent);text-decoration:none;font-weight:500}
+.founder-bar-left a:hover{text-decoration:underline}
+.founder-bar-right{font-size:0.72rem;color:var(--muted)}
+.founder-bar-right a{color:var(--muted);text-decoration:none}
+.founder-bar-right a:hover{color:var(--ink)}
+
+/* ── HERO ── */
+.hero{min-height:calc(100vh - 103px);display:grid;grid-template-columns:1fr 1fr}
+.hero-left{padding:72px 64px 72px 80px;display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--border)}
+.hero-eyebrow{font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:28px;display:flex;align-items:center;gap:10px}
+.hero-eyebrow::before{content:'';display:block;width:24px;height:1px;background:var(--muted)}
+.hero h1{font-family:'Libre Baskerville',serif;font-size:clamp(2.4rem,3.8vw,4rem);font-weight:400;line-height:1.08;letter-spacing:-0.02em;margin-bottom:20px}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero-sub{font-size:0.95rem;line-height:1.8;color:var(--muted);margin-bottom:36px;max-width:440px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px}
+.btn{display:inline-block;font-family:'Outfit',sans-serif;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;cursor:pointer;border:none;transition:all .2s;text-decoration:none;padding:12px 26px}
+.btn-accent{background:var(--accent);color:white}.btn-accent:hover{background:#a84214;transform:translateY(-1px)}
+.btn-ink{background:var(--ink);color:white}.btn-ink:hover{background:#2a2520}
+.btn-outline{background:transparent;color:var(--ink);border:1px solid var(--ink)}.btn-outline:hover{background:var(--ink);color:white}
+.btn-sm{padding:8px 18px;font-size:0.72rem}
+.hero-badges{display:flex;gap:10px;flex-wrap:wrap}
+.badge{display:flex;align-items:center;gap:6px;font-size:0.7rem;color:var(--muted);background:white;padding:5px 11px;border:1px solid var(--border)}
+.badge .bi{color:var(--green)}
+
+.hero-right{background:var(--off);display:flex;flex-direction:column;justify-content:center;padding:48px;gap:12px;position:relative;overflow:hidden}
+.hero-right-title{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+#heroAuctions{display:flex;flex-direction:column;gap:12px}
+.hero-artwork{background:white;border:1px solid var(--border);padding:16px;display:flex;gap:16px;align-items:center;cursor:pointer;transition:box-shadow .2s,transform .2s}
+.hero-artwork:hover{box-shadow:0 8px 24px rgba(0,0,0,0.08);transform:translateY(-2px)}
+.ha-thumb{width:64px;height:64px;background:var(--off);border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem;overflow:hidden}
+.ha-thumb img{width:100%;height:100%;object-fit:cover}
+.ha-info{flex:1;min-width:0}
+.ha-type{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+.ha-title{font-family:'Libre Baskerville',serif;font-size:0.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ha-artist{font-size:0.72rem;color:var(--muted);margin-bottom:4px}
+.ha-bid{font-size:0.78rem;font-weight:500}
+.ha-bid span{color:var(--accent);font-family:'Libre Baskerville',serif}
+.ha-status{font-size:0.6rem;padding:2px 8px;font-weight:500;flex-shrink:0}
+.hs-live{background:#22c55e;color:white}
+.hs-soon{background:var(--gold);color:white}
+.hero-empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:0.85rem}
+
+/* ── TICKER ── */
+.ticker{background:var(--ink);padding:10px 0;overflow:hidden}
+.ticker-track{display:flex;gap:40px;white-space:nowrap;animation:ticker 40s linear infinite}
+.ticker-track span{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.3)}
+.ticker-track .ta{color:var(--accent)}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── SECTIONS ── */
+.container{max-width:1280px;margin:0 auto;padding:0 80px}
+section{padding:88px 0}
+.s-eye{font-size:0.66rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.s-eye::before{content:'';display:block;width:18px;height:1px;background:var(--accent)}
+.s-title{font-family:'Libre Baskerville',serif;font-size:clamp(1.8rem,2.8vw,2.6rem);font-weight:400;line-height:1.15;margin-bottom:14px}
+.s-title em{font-style:italic;color:var(--accent)}
+.s-body{color:var(--muted);line-height:1.75;max-width:520px;font-size:0.9rem}
+
+/* ── ABOUT ── */
+.about{background:var(--off)}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start;margin-top:56px}
+.about-text p{font-size:0.9rem;color:var(--muted);line-height:1.85;margin-bottom:16px}
+.about-quote{font-family:'Libre Baskerville',serif;font-size:1.1rem;font-style:italic;line-height:1.55;color:var(--ink);border-left:3px solid var(--accent);padding-left:18px;margin:24px 0}
+.three-es{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-top:28px}
+.e-item{background:white;padding:20px 16px;text-align:center}
+.e-n{font-family:'Libre Baskerville',serif;font-size:1.8rem;font-style:italic;color:var(--accent);display:block;line-height:1}
+.e-l{font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.e-d{font-size:0.74rem;color:var(--muted);margin-top:5px;line-height:1.5}
+.about-stats{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border)}
+.stat-row{background:white;padding:22px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.stat-num{font-family:'Libre Baskerville',serif;font-size:2.2rem;color:var(--ink);flex-shrink:0}
+.stat-lbl{font-size:0.76rem;font-weight:500;margin-bottom:3px}
+.stat-desc{font-size:0.72rem;color:var(--muted);line-height:1.5}
+.cert-block{background:var(--ink);padding:22px 28px}
+.cert-title{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.cert-row{font-size:0.76rem;line-height:1.8;color:rgba(255,255,255,0.55);display:flex;gap:7px}
+.cert-row::before{content:'✓';color:var(--green);flex-shrink:0}
+
+/* ── PROGRAMMES ── */
+.prog-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-top:48px}
+.prog-item{background:white;padding:24px 20px;transition:background .2s}
+.prog-item:hover{background:var(--off)}
+.prog-icon{font-size:0.58rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:block;background:rgba(200,83,26,0.08);padding:3px 7px;border:1px solid rgba(200,83,26,0.15);display:inline-block}
+.prog-name{font-size:0.85rem;font-weight:500;margin-bottom:5px}
+.prog-desc{font-size:0.74rem;color:var(--muted);line-height:1.55}
+
+/* ── IMPACT ── */
+.impact-strip{background:var(--ink);padding:56px 0}
+.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,0.07)}
+.impact-cell{background:var(--ink);padding:40px 36px}
+.impact-num{font-family:'Libre Baskerville',serif;font-size:2.8rem;color:white;display:block;line-height:1;margin-bottom:6px}
+.impact-num span{font-size:1.3rem;color:var(--accent)}
+.impact-lbl{font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:5px}
+.impact-desc{font-size:0.76rem;color:rgba(255,255,255,0.4);line-height:1.6}
+
+/* ── AUCTIONS ── */
+.auctions-hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:40px;flex-wrap:wrap;gap:16px}
+.auctions-hdr-right{font-size:0.76rem;color:var(--muted);max-width:240px;line-height:1.6;text-align:right}
+#auctionGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.auction-card{background:white;border:1px solid var(--border);overflow:hidden;cursor:pointer;transition:box-shadow .25s,transform .25s}
+.auction-card:hover{box-shadow:0 12px 40px rgba(0,0,0,0.08);transform:translateY(-3px)}
+.ac-img{aspect-ratio:4/3;position:relative;background:var(--off);display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:3rem}
+.ac-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.ac-status{position:absolute;top:10px;right:10px;font-size:0.56rem;letter-spacing:0.14em;text-transform:uppercase;padding:3px 8px;font-weight:600}
+.st-live{background:#22c55e;color:white}
+.st-soon{background:var(--gold);color:white}
+.st-closed{background:var(--muted);color:white}
+.ac-atype{position:absolute;bottom:10px;left:10px;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;background:rgba(15,14,12,0.72);color:rgba(255,255,255,0.85);padding:3px 7px;backdrop-filter:blur(4px)}
+.ac-body{padding:18px}
+.ac-type{font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.ac-title{font-family:'Libre Baskerville',serif;font-size:1.1rem;margin-bottom:5px;line-height:1.2}
+.ac-desc{font-size:0.76rem;color:var(--muted);line-height:1.6;margin-bottom:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ac-footer{display:flex;justify-content:space-between;align-items:flex-end;padding-top:12px;border-top:1px solid var(--border)}
+.ac-bid-lbl{font-size:0.6rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted)}
+.ac-bid-val{font-family:'Libre Baskerville',serif;font-size:1.3rem;color:var(--ink)}
+.ac-bid-val small{font-family:'Outfit',sans-serif;font-size:0.72rem;color:var(--muted);font-weight:300}
+.ac-timer{text-align:right}
+.ac-timer-lbl{font-size:0.58rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted)}
+.ac-timer-val{font-size:0.8rem;font-weight:500;color:var(--accent);font-variant-numeric:tabular-nums}
+.ac-bid-btn{width:100%;margin-top:12px;background:var(--ink);color:white;border:none;padding:10px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;transition:background .2s}
+.ac-bid-btn:hover{background:var(--accent)}
+.ac-bid-btn:disabled{background:var(--muted);cursor:not-allowed;opacity:0.7}
+#auctionEmpty{text-align:center;padding:64px 20px;color:var(--muted);grid-column:1/-1;display:none}
+#auctionLoading{text-align:center;padding:64px 20px;color:var(--muted);grid-column:1/-1}
+
+/* ── HOW ── */
+.how{background:var(--off)}
+.how-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-top:48px}
+.how-step{background:var(--off);padding:32px 24px}
+.step-n{font-family:'Libre Baskerville',serif;font-size:2.8rem;font-style:italic;color:var(--border);line-height:1;margin-bottom:14px;display:block}
+.step-icon{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;color:var(--accent);margin-bottom:9px;display:block}
+.step-title{font-size:0.88rem;font-weight:600;margin-bottom:7px}
+.step-desc{font-size:0.76rem;color:var(--muted);line-height:1.65}
+
+/* ── QUALITY ── */
+.quality{background:var(--ink);color:white}
+.quality .s-eye{color:var(--gold)}.quality .s-eye::before{background:var(--gold)}
+.quality .s-title{color:white}
+.qual-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:48px;align-items:start}
+.qual-reqs{border:1px solid rgba(255,255,255,0.07)}
+.req-item{padding:18px 22px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;gap:14px;align-items:flex-start;background:rgba(255,255,255,0.02)}
+.req-item:last-child{border-bottom:none}
+.req-icon{font-size:0.9rem;color:var(--accent);flex-shrink:0;margin-top:2px;font-weight:700}
+.req-title{font-size:0.82rem;font-weight:500;color:white;margin-bottom:3px}
+.req-desc{font-size:0.75rem;color:rgba(255,255,255,0.4);line-height:1.6}
+.qual-cards{display:flex;flex-direction:column;gap:16px}
+.qual-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:24px}
+.qual-card-title{font-family:'Libre Baskerville',serif;font-size:1rem;font-style:italic;color:white;margin-bottom:8px}
+.qual-card p{font-size:0.77rem;color:rgba(255,255,255,0.4);line-height:1.65}
+.qual-card .qc-contact{margin-top:12px;font-size:0.75rem;color:rgba(255,255,255,0.25)}
+.qual-card .qc-contact a{color:var(--gold);text-decoration:none}
+.qual-warn{background:rgba(200,83,26,0.12);border:1px solid rgba(200,83,26,0.25);padding:14px 18px;margin-top:14px}
+.qual-warn p{font-size:0.76rem;color:rgba(255,255,255,0.5);line-height:1.6}
+.qual-warn strong{color:var(--accent)}
+
+/* ── SUBMIT ── */
+.submit-wrap{display:grid;grid-template-columns:1fr 340px;gap:48px;align-items:start;margin-top:48px}
+.form-box{border:1px solid var(--border);padding:40px}
+.f-label{font-size:0.65rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:8px}
+.f-req{color:var(--accent)}
+.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px}
+.type-btn{border:1px solid var(--border);background:white;padding:14px 10px;cursor:pointer;text-align:center;transition:all .2s;font-family:'Outfit',sans-serif}
+.type-btn:hover{border-color:var(--ink)}
+.type-btn.active{border-color:var(--accent);background:rgba(200,83,26,0.03)}
+.tb-icon{font-size:1.3rem;display:block;margin-bottom:5px}
+.tb-name{font-size:0.78rem;font-weight:500;display:block;margin-bottom:2px}
+.tb-sub{font-size:0.62rem;color:var(--muted);display:block;line-height:1.35}
+.clarif{display:none;background:rgba(200,83,26,0.03);border:1px solid rgba(200,83,26,0.12);padding:18px 22px;margin-bottom:20px;animation:fs .22s ease}
+.clarif.show{display:block}
+@keyframes fs{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+.clarif-title{font-size:0.63rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.f-group{display:flex;flex-direction:column;gap:5px}
+.f-group.full{grid-column:1/-1}
+.f-group input,.f-group select,.f-group textarea{border:1px solid var(--border);background:white;color:var(--ink);padding:9px 13px;font-family:'Outfit',sans-serif;font-size:0.86rem;outline:none;transition:border-color .2s;-webkit-appearance:none;border-radius:0}
+.f-group input:focus,.f-group select:focus,.f-group textarea:focus{border-color:var(--ink)}
+.f-group textarea{min-height:84px;resize:vertical}
+.f-group input.err,.f-group select.err,.f-group textarea.err{border-color:var(--red)}
+.f-div{border:none;border-top:1px solid var(--border);margin:20px 0}
+.q-notice{background:rgba(184,146,42,0.07);border:1px solid rgba(184,146,42,0.2);padding:12px 16px;margin-bottom:16px;display:flex;gap:10px}
+.q-notice p{font-size:0.74rem;color:#5c4a15;line-height:1.55}
+.upload-zone{border:2px dashed var(--border);padding:32px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative;margin-bottom:16px}
+.upload-zone:hover{border-color:var(--ink)}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.uz-icon{font-size:1.8rem;margin-bottom:6px;display:block}
+.uz-text{font-size:0.76rem;color:var(--muted);line-height:1.6}
+.uz-text strong{color:var(--ink)}
+#fileList{font-size:0.74rem;color:var(--muted);margin-bottom:14px;min-height:0}
+.file-item{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border)}
+.file-item:last-child{border-bottom:none}
+.file-rm{background:none;border:none;color:var(--red);cursor:pointer;font-size:0.8rem;padding:0 4px;margin-left:auto}
+.consent-row{display:flex;gap:9px;align-items:flex-start;margin-bottom:18px}
+.consent-row input[type=checkbox]{margin-top:3px;flex-shrink:0;accent-color:var(--accent)}
+.consent-row label{font-size:0.74rem;color:var(--muted);line-height:1.55;cursor:pointer}
+.submit-btn{background:var(--accent);color:white;border:none;padding:13px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;transition:all .2s;width:100%}
+.submit-btn:hover{background:#a84214}
+.submit-btn:disabled{background:var(--muted);cursor:not-allowed}
+.f-note{font-size:0.7rem;color:var(--muted);margin-top:9px;line-height:1.6;text-align:center}
+.f-note a{color:var(--accent);text-decoration:none}
+.form-msg{display:none;padding:14px 18px;margin-top:14px;font-size:0.8rem;line-height:1.55;align-items:center;gap:10px}
+.form-msg.show{display:flex}
+.msg-ok{background:rgba(26,122,74,0.07);border:1px solid rgba(26,122,74,0.2);color:#1a4a2a}
+.msg-err{background:rgba(200,40,26,0.07);border:1px solid rgba(200,40,26,0.2);color:#6b1a12}
+
+/* ── SIDEBAR ── */
+.sidebar{display:flex;flex-direction:column;gap:16px;position:sticky;top:80px}
+.s-card{border:1px solid var(--border);padding:20px;background:white}
+.s-card-title{font-family:'Libre Baskerville',serif;font-size:0.9rem;font-style:italic;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.s-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.s-list li{font-size:0.76rem;color:var(--muted);line-height:1.5;display:flex;gap:7px}
+.s-list li::before{content:'→';color:var(--accent);flex-shrink:0}
+.s-csr{background:var(--ink);padding:20px}
+.s-csr-title{font-size:0.63rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.s-csr p{font-size:0.74rem;color:rgba(255,255,255,0.45);line-height:1.65;margin-bottom:6px}
+.s-reg{font-size:0.68rem;color:rgba(255,255,255,0.25);font-variant-numeric:tabular-nums;margin-top:4px}
+
+/* ── DONATE ── */
+.donate{background:var(--off)}
+.donate-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;margin-top:48px}
+.donate-left p{font-size:0.88rem;color:var(--muted);line-height:1.8;margin-bottom:14px}
+.donate-tiers{display:flex;flex-direction:column;gap:10px;margin-top:24px}
+.donate-tier{border:1px solid var(--border);background:white;padding:18px 20px;cursor:pointer;transition:all .2s;text-align:left;width:100%;font-family:'Outfit',sans-serif;border-radius:0}
+.donate-tier:hover{border-color:var(--ink)}
+.donate-tier.active{border-color:var(--accent);background:rgba(200,83,26,0.02)}
+.dt-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.dt-name{font-size:0.88rem;font-weight:500}
+.dt-amt{font-family:'Libre Baskerville',serif;font-size:1.05rem;color:var(--accent)}
+.dt-desc{font-size:0.73rem;color:var(--muted)}
+.donate-form{margin-top:20px;border:1px solid var(--border);padding:24px;background:white}
+.donate-form-title{font-size:0.7rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.upi-block{background:var(--ink);padding:22px;margin-top:14px}
+.upi-title{font-size:0.63rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.upi-id{font-family:'Libre Baskerville',serif;font-size:1.2rem;color:white;margin-bottom:3px}
+.upi-sub{font-size:0.72rem;color:rgba(255,255,255,0.3);margin-bottom:12px}
+.upi-copy{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:white;padding:7px 14px;font-family:'Outfit',sans-serif;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:background .2s;border-radius:0}
+.upi-copy:hover{background:rgba(255,255,255,0.12)}
+.csr-block{border:1px solid var(--border);padding:24px;background:white}
+.csr-title{font-family:'Libre Baskerville',serif;font-size:0.95rem;font-style:italic;margin-bottom:14px}
+.csr-row{display:flex;gap:8px;margin-bottom:8px;font-size:0.76rem;color:var(--muted);align-items:flex-start}
+.csr-row::before{content:'✓';color:var(--green);flex-shrink:0;font-weight:600;margin-top:1px}
+.csr-contact{margin-top:16px;padding-top:14px;border-top:1px solid var(--border);font-size:0.76rem;color:var(--muted)}
+.csr-contact a{color:var(--accent);text-decoration:none}
+.csr-contact a:hover{text-decoration:underline}
+
+/* ── MODALS ── */
+.overlay{position:fixed;inset:0;background:rgba(15,14,12,0.72);z-index:400;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.overlay.open{display:flex}
+.modal{background:white;max-width:520px;width:100%;max-height:92vh;overflow-y:auto;position:relative;padding:40px;animation:mi .22s ease}
+@keyframes mi{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
+.modal-x{position:absolute;top:16px;right:20px;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--muted);line-height:1}
+.modal-x:hover{color:var(--ink)}
+.modal-eye{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.modal-title{font-family:'Libre Baskerville',serif;font-size:1.7rem;margin-bottom:5px}
+.modal-sub{font-size:0.8rem;color:var(--muted);line-height:1.6;margin-bottom:24px}
+.bid-summary{background:var(--off);border:1px solid var(--border);padding:14px 18px;margin-bottom:20px}
+.bsr{display:flex;justify-content:space-between;font-size:0.78rem;padding:3px 0}
+.bsr.total{border-top:1px solid var(--border);margin-top:7px;padding-top:9px;font-weight:500}
+.bsr.total span:last-child{font-family:'Libre Baskerville',serif;font-size:0.95rem;color:var(--accent)}
+.bid-cur{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.m-group{margin-bottom:14px;display:flex;flex-direction:column;gap:5px}
+.m-group label{font-size:0.63rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted)}
+.m-group input{border:1px solid var(--border);padding:9px 13px;font-family:'Outfit',sans-serif;font-size:0.88rem;outline:none;transition:border-color .2s;width:100%;border-radius:0}
+.m-group input:focus{border-color:var(--ink)}
+.modal-submit{width:100%;background:var(--accent);color:white;border:none;padding:12px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;transition:background .2s;margin-top:6px;border-radius:0}
+.modal-submit:hover{background:#a84214}
+.modal-note{font-size:0.7rem;color:var(--muted);margin-top:9px;line-height:1.55;text-align:center}
+
+/* ── ADMIN ── */
+.admin-overlay{position:fixed;inset:0;background:var(--ink);z-index:500;display:none;flex-direction:column;overflow:hidden}
+.admin-overlay.open{display:flex}
+.admin-nav{background:#1a1714;border-bottom:1px solid rgba(255,255,255,0.08);padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.admin-logo{font-family:'Libre Baskerville',serif;font-size:0.95rem;color:white;display:flex;align-items:center;gap:8px}
+.admin-logo span{color:var(--accent)}
+.admin-tabs{display:flex;gap:0;margin-left:32px}
+.admin-tab{background:none;border:none;padding:0 20px;height:56px;font-family:'Outfit',sans-serif;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.admin-tab:hover{color:rgba(255,255,255,0.7)}
+.admin-tab.active{color:white;border-bottom-color:var(--accent)}
+.admin-close{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);padding:6px 14px;font-family:'Outfit',sans-serif;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;border-radius:0}
+.admin-close:hover{background:rgba(255,255,255,0.12);color:white}
+.admin-body{flex:1;overflow-y:auto;padding:32px}
+.admin-panel{display:none}
+.admin-panel.active{display:block}
+.admin-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
+.admin-stat{background:#1a1714;border:1px solid rgba(255,255,255,0.07);padding:20px 24px}
+.as-num{font-family:'Libre Baskerville',serif;font-size:2rem;color:white;display:block;line-height:1;margin-bottom:4px}
+.as-num span{font-size:1rem;color:var(--accent)}
+.as-label{font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.3)}
+.admin-section-title{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:14px}
+.admin-table-wrap{overflow-x:auto;border:1px solid rgba(255,255,255,0.07);border-radius:0}
+.admin-table{width:100%;border-collapse:collapse;min-width:800px}
+.admin-table th{background:#1a1714;padding:10px 14px;text-align:left;font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.3);font-weight:500;white-space:nowrap;border-bottom:1px solid rgba(255,255,255,0.07)}
+.admin-table td{padding:11px 14px;font-size:0.78rem;color:rgba(255,255,255,0.6);border-bottom:1px solid rgba(255,255,255,0.05);vertical-align:top}
+.admin-table tr:last-child td{border-bottom:none}
+.admin-table tr:hover td{background:rgba(255,255,255,0.02)}
+.status-pill{font-size:0.58rem;padding:2px 8px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;display:inline-block}
+.sp-pending{background:rgba(184,146,42,0.2);color:var(--gold)}
+.sp-approved{background:rgba(26,122,74,0.2);color:#4ade80}
+.sp-live{background:rgba(34,197,94,0.2);color:#22c55e}
+.sp-rejected{background:rgba(200,40,26,0.2);color:#f87171}
+.sp-closed{background:rgba(107,101,96,0.2);color:rgba(255,255,255,0.4)}
+.admin-action-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);padding:4px 10px;font-family:'Outfit',sans-serif;font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all .2s;border-radius:0;margin-right:4px;margin-bottom:4px}
+.admin-action-btn:hover{background:rgba(255,255,255,0.1);color:white}
+.admin-action-btn.approve{border-color:rgba(26,122,74,0.4);color:#4ade80}
+.admin-action-btn.approve:hover{background:rgba(26,122,74,0.15)}
+.admin-action-btn.reject{border-color:rgba(200,40,26,0.4);color:#f87171}
+.admin-action-btn.reject:hover{background:rgba(200,40,26,0.15)}
+.admin-action-btn.live{border-color:rgba(34,197,94,0.4);color:#22c55e}
+.admin-action-btn.live:hover{background:rgba(34,197,94,0.15)}
+.admin-action-btn.close{border-color:rgba(107,101,96,0.4)}
+.timer-input{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:white;padding:4px 8px;font-family:'Outfit',sans-serif;font-size:0.72rem;border-radius:0;outline:none}
+.timer-input:focus{border-color:var(--accent)}
+.admin-empty{text-align:center;padding:48px;color:rgba(255,255,255,0.2);font-size:0.85rem}
+.admin-loading{text-align:center;padding:48px;color:rgba(255,255,255,0.3);font-size:0.82rem}
+.admin-login{display:flex;align-items:center;justify-content:center;flex:1;padding:40px}
+.login-box{background:#1a1714;border:1px solid rgba(255,255,255,0.08);padding:40px;max-width:360px;width:100%;text-align:center}
+.login-title{font-family:'Libre Baskerville',serif;font-size:1.5rem;color:white;margin-bottom:6px}
+.login-sub{font-size:0.78rem;color:rgba(255,255,255,0.35);margin-bottom:28px;line-height:1.6}
+.login-input{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:white;padding:11px 14px;font-family:'Outfit',sans-serif;font-size:0.9rem;outline:none;margin-bottom:12px;border-radius:0;text-align:center;letter-spacing:0.1em}
+.login-input:focus{border-color:var(--accent)}
+.login-btn{width:100%;background:var(--accent);color:white;border:none;padding:12px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;border-radius:0}
+.login-btn:hover{background:#a84214}
+.login-err{font-size:0.76rem;color:#f87171;margin-top:8px;display:none}
+
+/* ── FOOTER ── */
+footer{background:var(--ink);color:rgba(255,255,255,0.4);padding:56px 0 28px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.f-logo{font-family:'Libre Baskerville',serif;font-size:1.1rem;color:white;display:block;margin-bottom:12px}
+.f-logo span{color:var(--accent)}
+.f-tagline{font-size:0.76rem;line-height:1.7;max-width:260px;margin-bottom:16px}
+.f-socials{display:flex;gap:8px}
+.f-soc{width:30px;height:30px;border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:0.72rem;color:rgba(255,255,255,0.3);text-decoration:none;transition:all .2s}
+.f-soc:hover{border-color:rgba(255,255,255,0.35);color:white}
+.f-col h4{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:12px}
+.f-col a{display:block;font-size:0.78rem;color:rgba(255,255,255,0.38);text-decoration:none;margin-bottom:9px;transition:color .2s}
+.f-col a:hover{color:white}
+.f-bottom{border-top:1px solid rgba(255,255,255,0.06);padding-top:22px;display:flex;justify-content:space-between;align-items:center;font-size:0.7rem;flex-wrap:wrap;gap:10px}
+.f-reg{font-size:0.67rem;color:rgba(255,255,255,0.18)}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+.rd1{transition-delay:.1s}.rd2{transition-delay:.2s}.rd3{transition-delay:.3s}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  .container{padding:0 40px}
+  .hero-left{padding:56px 40px}
+  .hero-right{padding:40px}
+  .about-grid,.donate-grid,.qual-grid,.submit-wrap{grid-template-columns:1fr;gap:36px}
+  #auctionGrid{grid-template-columns:1fr 1fr}
+  .prog-grid{grid-template-columns:repeat(3,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:28px}
+  .admin-stats{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:720px){
+  .nav-inner{padding:0 20px}
+  .nav-links a:not(.nav-cta):not(.nav-outline){display:none}
+  .hero{grid-template-columns:1fr}
+  .hero-right{display:none}
+  .hero-left{padding:48px 24px}
+  .container{padding:0 24px}
+  section{padding:64px 0}
+  #auctionGrid{grid-template-columns:1fr}
+  .how-steps{grid-template-columns:1fr 1fr}
+  .prog-grid{grid-template-columns:1fr 1fr}
+  .impact-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .f-bottom{flex-direction:column;align-items:flex-start}
+  .f-reg{display:none}
+  .f-row{grid-template-columns:1fr}
+  .type-grid{grid-template-columns:1fr}
+  .bid-cur{grid-template-columns:1fr}
+  .admin-stats{grid-template-columns:1fr 1fr}
+  .admin-tabs{display:none}
+  .founder-bar-inner{padding:0 24px}
+}
+</style>
+</head>
+<body>
+
+<!-- CONFIG — paste your Apps Script URL here after deploying -->
+<script>
+const SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+const USD_RATE = 83;
+const AED_RATE = 22.7; // 1 AED = approx 22.7 INR
+const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
+</script>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <span class="nav-dot"></span>
+      True Colours <span style="font-family:'Outfit',sans-serif;font-weight:300;color:var(--muted);font-size:0.82em;margin-left:4px">— Art Auction</span>
+    </a>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#auctions">Auctions</a>
+      <a href="#submit">Submit</a>
+      <a href="#donate">Donate</a>
+      <a href="#" onclick="openAdmin(event)" style="color:var(--muted)">Admin</a>
+      <a href="#submit" class="nav-outline">Submit Artwork</a>
+      <a href="#donate" class="nav-cta">Donate</a>
+    </div>
+  </div>
+</nav>
+
+<!-- FOUNDER BAR -->
+<div class="founder-bar">
+  <div class="founder-bar-inner">
+    <div class="founder-bar-left">
+      <span style="font-size:0.62rem;letter-spacing:0.16em;text-transform:uppercase">An initiative by</span>
+      <strong>Divye Sitlani</strong>
+      <span style="color:var(--border)">·</span>
+      <span>In partnership with <a href="https://www.arpantrust.org" target="_blank">Arpan Trust</a></span>
+    </div>
+    <div class="founder-bar-right">
+      <a href="mailto:dsitlani.art@gmail.com">dsitlani.art@gmail.com</a>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Open to students, teachers &amp; artists worldwide</p>
+    <h1>An <em>International</em><br>Art Auction for<br>Arpan Trust</h1>
+    <p class="hero-sub">Submit original artwork, bid on extraordinary pieces, and help fund the education and care of children with disabilities at Arpan Trust, India. Every participating artist receives a certificate of contribution.</p>
+    <div class="hero-actions">
+      <a href="#auctions" class="btn btn-accent">Browse Auctions</a>
+      <a href="#submit" class="btn btn-outline">Submit Artwork</a>
+    </div>
+    <div class="hero-badges">
+      <div class="badge"><span class="bi">✓</span> 12A &amp; 80G Certified</div>
+      <div class="badge"><span class="bi">✓</span> CSR Eligible</div>
+      <div class="badge"><span class="bi">✓</span> 98% to Programmes</div>
+      <div class="badge"><span class="bi">✓</span> Certificate for Artists</div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <p class="hero-right-title">Live Auctions</p>
+    <div id="heroAuctions">
+      <div style="text-align:center;padding:40px 0;color:var(--muted);font-size:0.82rem">Loading auctions…</div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ta">True Colours — Art Auction</span><span>Founded by Divye Sitlani</span><span>In partnership with Arpan Trust</span><span>Since 1993</span><span class="ta">Submit Original Artwork</span><span>Certificate for Every Artist</span><span>12A &amp; 80G Certified</span><span>CSR Reg: CSR00021830</span><span>Ages 6–35 Served</span><span>98% to Programmes</span><span class="ta">Bid in ₹, $ or AED</span><span>All Proceeds to Arpan Trust</span>
+    <span class="ta">True Colours — Art Auction</span><span>Founded by Divye Sitlani</span><span>In partnership with Arpan Trust</span><span>Since 1993</span><span class="ta">Submit Original Artwork</span><span>Certificate for Every Artist</span><span>12A &amp; 80G Certified</span><span>CSR Reg: CSR00021830</span><span>Ages 6–35 Served</span><span>98% to Programmes</span><span class="ta">Bid in ₹, $ or AED</span><span>All Proceeds to Arpan Trust</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about" class="about">
+  <div class="container">
+    <div class="s-eye">About Arpan Trust</div>
+    <h2 class="s-title">Our partner — <em>who your</em><br>bid supports</h2>
+    <div class="about-grid">
+      <div class="reveal">
+        <p>Arpan Trust is a certified non-profit organisation based in India, dedicated to empowering children and adults aged 6 to 35 with intellectual disabilities. For over three decades, Arpan has created a nurturing, inclusive space where individuals with multiple disabilities are supported through holistic education, therapeutic care, and skill development.</p>
+        <div class="about-quote">"We envision a world where every individual with special needs is not only accepted but celebrated — where their unique abilities shape inclusive communities."</div>
+        <p>Through special education, speech &amp; language therapy, physiotherapy, sensory integration, art, music, sports, and vocational training, Arpan equips every beneficiary with tools to live an independent, fulfilling life.</p>
+        <div class="three-es">
+          <div class="e-item"><span class="e-n">E</span><div class="e-l">Enhance</div><div class="e-d">Abilities and nurture every unique personality</div></div>
+          <div class="e-item"><span class="e-n">E</span><div class="e-l">Enrich</div><div class="e-d">Lives with new experiences and connections</div></div>
+          <div class="e-item"><span class="e-n">E</span><div class="e-l">Empower</div><div class="e-d">Individuals to lead confident, productive lives</div></div>
+        </div>
+      </div>
+      <div class="reveal rd2">
+        <div class="about-stats">
+          <div class="stat-row"><span class="stat-num">98%</span><div><div class="stat-lbl">Resource Allocation</div><div class="stat-desc">98% of all funds raised go directly to programme services — not administration.</div></div></div>
+          <div class="stat-row"><span class="stat-num">6–35</span><div><div class="stat-lbl">Ages Served</div><div class="stat-desc">Arpan serves individuals from age 6 through 35, offering continuity of care across all life stages.</div></div></div>
+          <div class="stat-row"><span class="stat-num">30+</span><div><div class="stat-lbl">Years of Service</div><div class="stat-desc">Founded in 1993 — over three decades of unbroken, community-driven care in Gujarat, India.</div></div></div>
+          <div class="cert-block">
+            <div class="cert-title">Certifications</div>
+            <div class="cert-row">Recognised by the Government of Gujarat as an Institution for Persons With Disability</div>
+            <div class="cert-row">12A &amp; 80G status — donations are tax-exempt under Indian law</div>
+            <div class="cert-row">CSR Registration: CSR00021830</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="s-eye reveal" style="margin-top:72px">Programmes</div>
+    <h3 class="s-title reveal" style="font-size:1.7rem">What Arpan does <em>every day</em></h3>
+    <div class="prog-grid reveal">
+      <div class="prog-item"><span class="prog-icon">SE</span><div class="prog-name">Special Education</div><div class="prog-desc">Tailored learning aligned to each individual's cognitive profile.</div></div>
+      <div class="prog-item"><span class="prog-icon">SL</span><div class="prog-name">Speech &amp; Language</div><div class="prog-desc">Therapy to develop communication and self-expression.</div></div>
+      <div class="prog-item"><span class="prog-icon">PT</span><div class="prog-name">Physiotherapy</div><div class="prog-desc">Movement therapy to enhance motor skills and independence.</div></div>
+      <div class="prog-item"><span class="prog-icon">SI</span><div class="prog-name">Sensory Integration</div><div class="prog-desc">Therapeutic environments for processing sensory input.</div></div>
+      <div class="prog-item"><span class="prog-icon">AT</span><div class="prog-name">Art Therapy</div><div class="prog-desc">Creative expression as a tool for focus and confidence.</div></div>
+      <div class="prog-item"><span class="prog-icon">MU</span><div class="prog-name">Music</div><div class="prog-desc">Vocal and instrumental learning enriching development.</div></div>
+      <div class="prog-item"><span class="prog-icon">SP</span><div class="prog-name">Sports</div><div class="prog-desc">Physical activity building teamwork and well-being.</div></div>
+      <div class="prog-item"><span class="prog-icon">VT</span><div class="prog-name">Vocational Training</div><div class="prog-desc">Skills preparing every individual for financial independence.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT STRIP -->
+<div class="impact-strip">
+  <div class="container">
+    <div class="impact-grid">
+      <div class="impact-cell reveal"><span class="impact-num">1,714</span><div class="impact-lbl">Beneficiaries since 1993</div><div class="impact-desc">Three decades of direct, holistic support across Gujarat.</div></div>
+      <div class="impact-cell reveal rd2"><span class="impact-num">98<span>%</span></span><div class="impact-lbl">Directly to programmes</div><div class="impact-desc">Of every rupee raised, 98 paise reaches a beneficiary directly.</div></div>
+      <div class="impact-cell reveal rd3"><span class="impact-num">30<span>+</span></span><div class="impact-lbl">Years of unbroken service</div><div class="impact-desc">Founded in 1993, serving with the same dedication every day.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- AUCTIONS -->
+<section id="auctions">
+  <div class="container">
+    <div class="auctions-hdr">
+      <div>
+        <div class="s-eye">Live Auctions</div>
+        <h2 class="s-title" style="margin-bottom:0">Original works. <em>Real impact.</em></h2>
+      </div>
+      <div class="auctions-hdr-right">100% of every winning bid goes directly to Arpan Trust. Bid in ₹, USD or AED. All works verified before listing.</div>
+    </div>
+    <div id="auctionGrid">
+      <div id="auctionLoading">Loading artworks…</div>
+    </div>
+    <div id="auctionEmpty" style="display:none;text-align:center;padding:64px 0;color:var(--muted)">
+      
+      <div style="font-size:0.9rem;margin-bottom:6px;font-weight:500">No live auctions yet</div>
+      <div style="font-size:0.8rem">Submissions are being reviewed. Check back soon — or be the first to submit your artwork.</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="how">
+  <div class="container">
+    <div class="s-eye">How It Works</div>
+    <h2 class="s-title">From your studio<br>to <em>lasting impact</em></h2>
+    <div class="how-steps">
+      <div class="how-step reveal"><span class="step-n">01</span><span class="step-icon">01.</span><div class="step-title">Submit Your Artwork</div><div class="step-desc">Fill in the form below. Tell us who you are — student, teacher, or external artist. Upload high-quality images of your original work with medium and dimensions.</div></div>
+      <div class="how-step reveal rd1"><span class="step-n">02</span><span class="step-icon">02.</span><div class="step-title">Verification</div><div class="step-desc">Our team reviews every submission within 48 hours. We verify originality, image quality, and confirm the work meets standards before it goes live.</div></div>
+      <div class="how-step reveal rd2"><span class="step-n">03</span><span class="step-icon">03.</span><div class="step-title">Live Auction</div><div class="step-desc">Approved works go live with a set bidding window. Bidders from around the world can place offers in Indian Rupees, US Dollars, or UAE Dirhams.</div></div>
+      <div class="how-step reveal rd3"><span class="step-n">04</span><span class="step-icon">04.</span><div class="step-title">Certificate &amp; Funds</div><div class="step-desc">Every participating artist receives an official certificate of contribution. 100% of the winning bid transfers to Arpan Trust within 7 working days.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- QUALITY REQUIREMENTS -->
+<section class="quality">
+  <div class="container">
+    <div class="s-eye">Submission Requirements</div>
+    <h2 class="s-title">What we expect from<br>every <em>submission</em></h2>
+    <div class="qual-grid">
+      <div>
+        <div class="qual-reqs reveal">
+          <div class="req-item"><span class="req-icon">—</span><div><div class="req-title">Original Artwork Only</div><div class="req-desc">Must be entirely your own original work. No reproductions or AI-generated pieces. Any theme is welcome.</div></div></div>
+          <div class="req-item"><span class="req-icon">—</span><div><div class="req-title">Medium Must Be Stated</div><div class="req-desc">Clearly specify the medium — oil, acrylic, watercolour, ink, mixed media, digital, sculpture, etc. Mandatory for all.</div></div></div>
+          <div class="req-item"><span class="req-icon">—</span><div><div class="req-title">Dimensions &amp; Starting Bid</div><div class="req-desc">Provide physical dimensions and suggest a starting bid in INR. Required for all submissions.</div></div></div>
+          <div class="req-item"><span class="req-icon">—</span><div><div class="req-title">High-Quality Photography</div><div class="req-desc">The artwork and photograph must both be high quality. Even lighting, neutral background, minimum 2000px. Blurry or dark images will be rejected.</div></div></div>
+          <div class="req-item"><span class="req-icon">—</span><div><div class="req-title">Verification Before Listing</div><div class="req-desc">All submissions are reviewed before going live. Our team may request additional photos or information.</div></div></div>
+          <div class="req-item"><span class="req-icon">—</span><div><div class="req-title">Teachers: School &amp; Location Required</div><div class="req-desc">If submitting as a teacher, your school name and city/country are mandatory fields.</div></div></div>
+        </div>
+        <div class="qual-warn reveal"><p><strong>Open to everyone.</strong> This auction is not limited to art students. Students of any subject, teachers, staff, and external artists from anywhere in the world are welcome. Encourage friends and colleagues to join.</p></div>
+      </div>
+      <div class="qual-cards reveal rd2">
+        <div class="qual-card">
+          <div class="qual-card-title">Certificate of Contribution</div>
+          <p>Every artist whose work is verified and listed receives an official certificate of contribution from Arpan Trust. This is a meaningful addition to university applications, portfolios, and professional records — proof of real social impact.</p>
+        </div>
+        <div class="qual-card">
+          <div class="qual-card-title">Why participation matters</div>
+          <p>Contributing demonstrates social impact, community leadership, and global citizenship — qualities valued by universities worldwide. By participating, you directly fund education and therapy for children with intellectual disabilities.</p>
+        </div>
+        <div class="qual-card">
+          <div class="qual-card-title">Questions?</div>
+          <p>Unsure whether your work meets requirements? Reach out before submitting.</p>
+          <div class="qc-contact">Contact: <a href="mailto:dsitlani.art@gmail.com">dsitlani.art@gmail.com</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SUBMIT ARTWORK -->
+<section id="submit">
+  <div class="container">
+    <div class="s-eye">Submit Artwork</div>
+    <h2 class="s-title">Share your art.<br><em>Fund a future.</em></h2>
+    <p class="s-body">Original artwork from students, teachers, and artists worldwide. All proceeds go directly to Arpan Trust. Reviewed within 48 hours.</p>
+    <div class="submit-wrap">
+      <div class="form-box reveal">
+
+        <!-- Artist Type -->
+        <span class="f-label">I am submitting as a — <span class="f-req">*</span></span>
+        <div class="type-grid">
+          <button class="type-btn" id="tbStudent" onclick="setType('student')"><span class="tb-name">Student</span><span class="tb-sub">Enrolled at any school or university</span></button>
+          <button class="type-btn" id="tbTeacher" onclick="setType('teacher')"><span class="tb-name">Teacher / Staff</span><span class="tb-sub">Educator or staff at any institution</span></button>
+          <button class="type-btn" id="tbExternal" onclick="setType('external')"><span class="tb-name">External Artist</span><span class="tb-sub">Artist, supporter, or anyone else</span></button>
+        </div>
+
+        <!-- Student -->
+        <div class="clarif" id="clarifStudent">
+          <div class="clarif-title">Student Details</div>
+          <div class="f-row">
+            <div class="f-group"><label class="f-label">School / University <span class="f-req">*</span></label><input id="s_institution" type="text" placeholder="e.g. Jumeirah College, Dubai"></div>
+            <div class="f-group"><label class="f-label">Year / Grade <span class="f-req">*</span></label><select id="s_year"><option value="">Select year</option><option>Year 9</option><option>Year 10</option><option>Year 11</option><option>Year 12</option><option>Year 13</option><option>University — Year 1</option><option>University — Year 2</option><option>University — Year 3+</option><option>Other</option></select></div>
+          </div>
+          <div class="f-row">
+            <div class="f-group"><label class="f-label">Made in supervised session? <span class="f-req">*</span></label><select id="s_supervised"><option value="">Select</option><option>Yes — Art class / assignment</option><option>Yes — Extracurricular / club</option><option>No — Independent personal work</option></select></div>
+            <div class="f-group"><label class="f-label">Guardian / Parent Consent <span class="f-req">*</span></label><select id="s_guardian"><option value="">Select</option><option>Yes — I have guardian consent</option><option>I am 18+ and consent myself</option></select></div>
+          </div>
+        </div>
+
+        <!-- Teacher -->
+        <div class="clarif" id="clarifTeacher">
+          <div class="clarif-title">Teacher / Staff Details</div>
+          <div class="f-row">
+            <div class="f-group"><label class="f-label">School / Institution Name <span class="f-req">*</span></label><input id="t_institution" type="text" placeholder="e.g. Dubai College"></div>
+            <div class="f-group"><label class="f-label">City &amp; Country <span class="f-req">*</span></label><input id="t_city" type="text" placeholder="e.g. Dubai, UAE"></div>
+          </div>
+          <div class="f-row">
+            <div class="f-group"><label class="f-label">Department / Role <span class="f-req">*</span></label><select id="t_role"><option value="">Select role</option><option>Art Teacher</option><option>Special Educator</option><option>Art Therapist</option><option>Occupational Therapist</option><option>Speech Therapist</option><option>Physiotherapist</option><option>Administrative Staff</option><option>Volunteer / Intern</option><option>Other</option></select></div>
+            <div class="f-group"><label class="f-label">Years at Institution</label><select id="t_years"><option value="">Select</option><option>Less than 1 year</option><option>1–3 years</option><option>3–5 years</option><option>5–10 years</option><option>10+ years</option></select></div>
+          </div>
+        </div>
+
+        <!-- External -->
+        <div class="clarif" id="clarifExternal">
+          <div class="clarif-title">External Artist Details</div>
+          <div class="f-row">
+            <div class="f-group"><label class="f-label">City &amp; Country <span class="f-req">*</span></label><input id="e_city" type="text" placeholder="e.g. London, UK"></div>
+            <div class="f-group"><label class="f-label">How did you hear about this? <span class="f-req">*</span></label><select id="e_source"><option value="">Select</option><option>Social Media (Instagram / Facebook)</option><option>Friend / Word of mouth</option><option>Teach For India / Teach For All</option><option>Arpan Trust website</option><option>News / article</option><option>Other</option></select></div>
+          </div>
+          <div class="f-row">
+            <div class="f-group"><label class="f-label">Your Artistic Background</label><select id="e_background"><option value="">Select</option><option>Hobbyist / Self-taught</option><option>Art School Graduate</option><option>Practising Professional Artist</option><option>Illustrator / Designer</option><option>Academic / Art Educator</option><option>Other</option></select></div>
+            <div class="f-group"><label class="f-label">Portfolio / Website (optional)</label><input id="e_portfolio" type="url" placeholder="https://your-portfolio.com"></div>
+          </div>
+          <div class="f-group"><label class="f-label">Credit Preference</label><select id="e_credit"><option>Yes — show my full name</option><option>Yes — first name only</option><option>No — list as "Anonymous Artist"</option></select></div>
+        </div>
+
+        <hr class="f-div">
+
+        <div class="q-notice"><span style="font-weight:600;flex-shrink:0;color:var(--gold)">Note:</span><p><strong>Quality reminder:</strong> Both the artwork and photograph must be of high quality. Even lighting, neutral background, minimum 2000px wide. Blurry or poorly-lit images will not be approved. Medium and dimensions are mandatory.</p></div>
+
+        <div class="f-row">
+          <div class="f-group"><label class="f-label">Full Name (first &amp; last) <span class="f-req">*</span></label><input id="f_name" type="text" placeholder="First and last name"></div>
+          <div class="f-group"><label class="f-label">Email Address <span class="f-req">*</span></label><input id="f_email" type="email" placeholder="you@email.com"></div>
+        </div>
+        <div class="f-row">
+          <div class="f-group"><label class="f-label">Artwork Title <span class="f-req">*</span></label><input id="f_title" type="text" placeholder="Title of your work"></div>
+          <div class="f-group"><label class="f-label">Medium <span class="f-req">*</span></label><select id="f_medium"><option value="">Select medium</option><option>Oil on Canvas</option><option>Acrylic on Canvas</option><option>Watercolour on Paper</option><option>Ink / Pen Drawing</option><option>Mixed Media</option><option>Photography</option><option>Digital Art (printed, archival paper)</option><option>Sculpture / 3D</option><option>Gouache</option><option>Pastel</option><option>Other</option></select></div>
+        </div>
+        <div class="f-row">
+          <div class="f-group"><label class="f-label">Dimensions <span class="f-req">*</span></label><input id="f_dims" type="text" placeholder="e.g. 60 × 45 cm"></div>
+          <div class="f-group"><label class="f-label">Suggested Starting Bid (₹) <span class="f-req">*</span></label><input id="f_bid" type="number" placeholder="e.g. 2500" min="500"></div>
+        </div>
+        <div class="f-row">
+          <div class="f-group full"><label class="f-label">Artwork Description <span class="f-req">*</span></label><textarea id="f_desc" placeholder="Describe the work — its story, inspiration, technique, and any personal meaning."></textarea></div>
+        </div>
+
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" id="f_images" accept="image/*" multiple onchange="handleFiles(this.files)">
+          <span class="uz-icon" style="font-size:1.6rem;font-family:monospace;color:var(--muted)">[ img ]</span>
+          <div class="uz-text"><strong>Click to upload artwork photographs</strong><br>JPEG or PNG · Min 2000px wide · Max 10MB per file · Up to 5 images<br>Must include a clear, well-lit front-facing photo.</div>
+        </div>
+        <div id="fileList"></div>
+
+        <div class="f-group full" style="margin-bottom:16px"><label class="f-label">Additional Notes (optional)</label><textarea id="f_notes" style="min-height:60px" placeholder="Any notes on provenance, framing, shipping, or messages for our team…"></textarea></div>
+
+        <div class="consent-row">
+          <input type="checkbox" id="f_consent">
+          <label for="f_consent">I confirm this is my entirely original work. I hold full rights to it and agree to donate 100% of the auction proceeds to Arpan Trust. I understand my submission must pass quality verification before being listed.</label>
+        </div>
+
+        <button class="submit-btn" id="submitBtn" onclick="submitArtwork()">Submit for Review →</button>
+        <p class="f-note">Reviewed within 48 hours. Questions? <a href="mailto:dsitlani.art@gmail.com">dsitlani.art@gmail.com</a></p>
+        <div class="form-msg msg-ok" id="submitOk"><span style="font-weight:700;color:var(--green);font-size:1rem">✓</span><div><strong style="display:block;margin-bottom:2px">Submission received!</strong>We'll review your artwork within 48 hours and contact you at the email provided. Thank you for supporting Arpan Trust.</div></div>
+        <div class="form-msg msg-err" id="submitErr"><span style="font-size:1.3rem">⚠️</span><div id="submitErrMsg">Something went wrong. Please try again or email dsitlani.art@gmail.com directly.</div></div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="s-card">
+          <div class="s-card-title">Submission Checklist</div>
+          <ul class="s-list">
+            <li>Original artwork only — any theme</li>
+            <li>Medium clearly stated (mandatory)</li>
+            <li>Physical dimensions provided</li>
+            <li>Starting bid suggested in ₹</li>
+            <li>High-quality, well-lit photograph(s)</li>
+            <li>Teachers: school name + location required</li>
+            <li>Guardian consent if under 18</li>
+            <li>All submissions verified before listing</li>
+          </ul>
+        </div>
+        <div class="s-card" style="background:var(--off)">
+          <div class="s-card-title">Open to everyone</div>
+          <ul class="s-list">
+            <li>Students at any school worldwide</li>
+            <li>Teachers &amp; educators</li>
+            <li>External artists from anywhere</li>
+            <li>Not limited to Art students</li>
+            <li>All participants receive a certificate</li>
+          </ul>
+        </div>
+        <div class="s-csr">
+          <div class="s-csr-title">Corporate / CSR</div>
+          <p>Arpan Trust is eligible for CSR fund allocation under the Companies Act, 2013.</p>
+          <p>Donations qualify for 80G tax exemption.</p>
+          <div class="s-reg">CSR Reg: CSR00021830</div>
+          <div class="s-reg" style="margin-top:3px">Charity: E-4708-Vadodara</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DONATE -->
+<section id="donate" class="donate">
+  <div class="container">
+    <div class="s-eye">Donate Directly</div>
+    <h2 class="s-title">Support Arpan Trust<br>beyond the <em>auction</em></h2>
+    <p class="s-body">Every contribution funds therapy sessions, classroom materials, and vocational training for children and adults with intellectual disabilities.</p>
+    <div class="donate-grid">
+      <div>
+        <p class="reveal">You don't need to buy or submit art to make a difference. Direct donations to Arpan Trust are processed transparently, with 98% allocated directly to programme delivery. All donors receive an 80G tax exemption certificate.</p>
+        <div class="donate-tiers reveal">
+          <button class="donate-tier active" onclick="selectTier(this,'Sponsor a Therapy Session','500','6')"><div class="dt-top"><span class="dt-name">Sponsor a Therapy Session</span><span class="dt-amt">₹500 / $6</span></div><div class="dt-desc">Funds one hour of speech, occupational, or physiotherapy for a student.</div></button>
+          <button class="donate-tier" onclick="selectTier(this,'Sponsor a Week of Meals','1500','18')"><div class="dt-top"><span class="dt-name">Sponsor a Week of Meals</span><span class="dt-amt">₹1,500 / $18</span></div><div class="dt-desc">Provides nutritious daily meals for one student for a full week.</div></button>
+          <button class="donate-tier" onclick="selectTier(this,'Fund Art Materials','3000','36')"><div class="dt-top"><span class="dt-name">Fund Art Materials</span><span class="dt-amt">₹3,000 / $36</span></div><div class="dt-desc">Supplies a full term of art therapy materials for the whole class.</div></button>
+          <button class="donate-tier" onclick="selectTier(this,'Sponsor a Student (1 Month)','5000','60')"><div class="dt-top"><span class="dt-name">Sponsor a Student — 1 Month</span><span class="dt-amt">₹5,000 / $60</span></div><div class="dt-desc">Covers the monthly programme cost for one student at Arpan Trust.</div></button>
+        </div>
+        <div class="donate-form reveal">
+          <div class="donate-form-title">Register your donation intent</div>
+          <div class="f-row">
+            <div class="f-group"><label class="f-label">Full Name (first &amp; last) <span class="f-req">*</span></label><input id="d_name" type="text" placeholder="First and last name"></div>
+            <div class="f-group"><label class="f-label">Email <span class="f-req">*</span></label><input id="d_email" type="email" placeholder="you@email.com"></div>
+          </div>
+          <div class="f-row" style="grid-template-columns:1fr 1fr 1fr">
+            <div class="f-group"><label class="f-label">Amount (₹) <span class="f-req">*</span></label><input id="d_inr" type="number" placeholder="e.g. 500" oninput="syncDonate('inr')"></div>
+            <div class="f-group"><label class="f-label">Amount ($)</label><input id="d_usd" type="number" placeholder="e.g. 6" oninput="syncDonate('usd')"></div>
+            <div class="f-group"><label class="f-label">Amount (AED)</label><input id="d_aed" type="number" placeholder="e.g. 22" oninput="syncDonate('aed')"></div>
+          </div>
+          <div class="f-group" style="margin-bottom:14px"><label class="f-label">Message (optional)</label><textarea id="d_msg" style="min-height:60px" placeholder="Any message for Arpan Trust…"></textarea></div>
+          <button class="submit-btn" onclick="submitDonation()">Register Donation Intent →</button>
+          <div class="form-msg msg-ok" id="donateOk" style="margin-top:12px"><span style="font-weight:700;color:var(--green);font-size:1rem">✓</span><div><strong style="display:block;margin-bottom:2px">Thank you!</strong>Your donation intent has been recorded. Please complete payment via UPI below, then we'll send your 80G certificate to your email.</div></div>
+          <div class="form-msg msg-err" id="donateErr" style="margin-top:12px"><span style="font-weight:700;color:var(--red);font-size:1rem">!</span><div>Something went wrong. Please email dsitlani.art@gmail.com directly.</div></div>
+        </div>
+        <div class="upi-block reveal">
+          <div class="upi-title">Complete Payment via UPI</div>
+          <div class="upi-id">arpancharitabletrust@upi</div>
+          <div class="upi-sub">Or contact us for NEFT / RTGS / international wire details</div>
+          <button class="upi-copy" onclick="copyUPI()">Copy UPI ID</button>
+        </div>
+      </div>
+      <div>
+        <div class="csr-block reveal" id="csr">
+          <div class="csr-title">Corporate &amp; CSR Giving</div>
+          <p style="font-size:0.82rem;color:var(--muted);line-height:1.75;margin-bottom:14px">Arpan Trust is registered for CSR fund allocation under the Companies Act, 2013. Your company's contribution is eligible for CSR compliance and 80G tax deduction.</p>
+          <div class="csr-row">80G tax exemption certificate issued for all donations</div>
+          <div class="csr-row">CSR Registration No: <strong>CSR00021830</strong></div>
+          <div class="csr-row">Registered Charity: <strong>E-4708-Vadodara</strong></div>
+          <div class="csr-row">12A status — perpetual recognition as a charitable institution</div>
+          <div class="csr-row">Impact reports available on request</div>
+          <div class="csr-row">Logo placement for corporate sponsors on this platform</div>
+          <div class="csr-contact">
+            To discuss a CSR partnership:<br>
+            <a href="mailto:arpancharitabletrust1993@gmail.com">arpancharitabletrust1993@gmail.com</a><br>
+            <a href="mailto:dsitlani.art@gmail.com">dsitlani.art@gmail.com</a><br>
+            +91-63588-56758
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <span class="f-logo">True <span>Colours</span> <span style="font-weight:300;font-style:italic;font-size:0.82em;color:rgba(255,255,255,0.28)">— Art Auction</span></span>
+        <p class="f-tagline">An initiative by Divye Sitlani, raising funds in partnership with Arpan Trust — a special needs school in India since 1993. Open to students, teachers, and artists worldwide.</p>
+        <div class="f-socials">
+          <a href="https://www.facebook.com/people/Arpan-Charitable-Trust/100064452978748/" class="f-soc" target="_blank">f</a>
+          <a href="https://www.instagram.com/arpan_trust/" class="f-soc" target="_blank">ig</a>
+          <a href="https://www.youtube.com/@arpancharitabletrust4310" class="f-soc" target="_blank">yt</a>
+        </div>
+      </div>
+      <div class="f-col"><h4>Platform</h4><a href="#auctions">Live Auctions</a><a href="#submit">Submit Artwork</a><a href="#how">How It Works</a><a href="#donate">Donate</a></div>
+      <div class="f-col"><h4>About</h4><a href="https://www.arpantrust.org" target="_blank">Arpan Trust Website</a><a href="#about">Programmes</a><a href="#csr">CSR &amp; Corporate</a></div>
+      <div class="f-col"><h4>Contact</h4><a href="mailto:dsitlani.art@gmail.com">dsitlani.art@gmail.com</a><a href="mailto:arpancharitabletrust1993@gmail.com">arpancharitabletrust1993@gmail.com</a><a href="tel:+916358856758">+91-63588-56758</a></div>
+    </div>
+    <div class="f-bottom">
+      <span>© 2025 True Colours — Art Auction. Founded by Divye Sitlani. All proceeds to Arpan Trust.</span>
+      <span class="f-reg">CSR: CSR00021830 · Charity: E-4708-Vadodara · 12A &amp; 80G Certified</span>
+    </div>
+  </div>
+</footer>
+
+<!-- BID MODAL -->
+<div class="overlay" id="bidOverlay" onclick="closeBidOut(event)">
+  <div class="modal">
+    <button class="modal-x" onclick="closeBid()">✕</button>
+    <div class="modal-eye">Place Your Bid</div>
+    <div class="modal-title" id="m_title">—</div>
+    <p class="modal-sub">By <strong id="m_artist">—</strong>. 100% of your winning bid transfers directly to Arpan Trust.</p>
+    <div class="bid-summary">
+      <div class="bsr"><span>Current highest bid</span><span id="m_current">—</span></div>
+      <div class="bsr"><span>Minimum bid</span><span id="m_min">—</span></div>
+      <div class="bsr"><span>Payment collected</span><span>Only if you win</span></div>
+      <div class="bsr total"><span>Your bid</span><span id="m_bidDisplay">—</span></div>
+    </div>
+    <div class="bid-cur" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="m-group"><label>Bid in ₹ (INR)</label><input type="number" id="m_inr" placeholder="e.g. 3000" oninput="syncBid('inr')"></div>
+      <div class="m-group"><label>Bid in $ (USD)</label><input type="number" id="m_usd" placeholder="e.g. 36" oninput="syncBid('usd')"></div>
+      <div class="m-group"><label>Bid in AED</label><input type="number" id="m_aed" placeholder="e.g. 132" oninput="syncBid('aed')"></div>
+    </div>
+    <div class="m-group"><label>Your Full Name</label><input type="text" id="m_name" placeholder="First and last name"></div>
+    <div class="m-group"><label>Email Address</label><input type="email" id="m_email" placeholder="you@email.com"></div>
+    <button class="modal-submit" onclick="confirmBid()">Confirm Bid →</button>
+    <div class="form-msg msg-ok" id="bidOk" style="margin-top:12px"><span style="font-weight:700;color:var(--green);font-size:1rem">✓</span><div><strong style="display:block;margin-bottom:2px">Bid placed!</strong>You'll be notified by email if you win. Thank you for supporting Arpan Trust.</div></div>
+    <div class="form-msg msg-err" id="bidErr" style="margin-top:12px"><span style="font-weight:700;color:var(--red);font-size:1rem">!</span><div id="bidErrMsg">Something went wrong. Please try again.</div></div>
+    <p class="modal-note">Bids are binding. Payment collected only from the winning bidder after auction closes.</p>
+  </div>
+</div>
+
+<!-- ADMIN OVERLAY -->
+<div class="admin-overlay" id="adminOverlay">
+  <!-- Login -->
+  <div id="adminLogin" style="display:flex;flex-direction:column;flex:1">
+    <div style="background:#1a1714;border-bottom:1px solid rgba(255,255,255,0.08);padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-family:'Libre Baskerville',serif;font-size:0.95rem;color:white">True <span style="color:var(--accent)">Colours</span> <span style="font-size:0.75rem;color:rgba(255,255,255,0.3);font-family:'Outfit',sans-serif">Admin</span></div>
+      <button class="admin-close" onclick="closeAdmin()">✕ Close</button>
+    </div>
+    <div class="admin-login">
+      <div class="login-box">
+        <div class="login-title">Admin Access</div>
+        <div class="login-sub">Enter the admin password to access the True Colours dashboard.</div>
+        <input type="password" class="login-input" id="loginInput" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
+        <button class="login-btn" onclick="doLogin()">Enter Dashboard →</button>
+        <div class="login-err" id="loginErr">Incorrect password. Try again.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard (hidden until login) -->
+  <div id="adminDash" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+    <div class="admin-nav">
+      <div style="display:flex;align-items:center">
+        <div class="admin-logo">True <span>Colours</span> <span style="font-family:'Outfit',sans-serif;font-size:0.72rem;color:rgba(255,255,255,0.3);margin-left:6px">Admin</span></div>
+        <div class="admin-tabs">
+          <button class="admin-tab active" onclick="showAdminTab('overview')">Overview</button>
+          <button class="admin-tab" onclick="showAdminTab('submissions')">Submissions</button>
+          <button class="admin-tab" onclick="showAdminTab('bids')">Bids</button>
+          <button class="admin-tab" onclick="showAdminTab('donations')">Donations</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="admin-action-btn" onclick="loadAdminData()" style="font-size:0.65rem">↻ Refresh</button>
+        <button class="admin-close" onclick="closeAdmin()">✕ Close</button>
+      </div>
+    </div>
+    <div class="admin-body">
+      <!-- Overview -->
+      <div class="admin-panel active" id="panel-overview">
+        <div class="admin-stats" id="adminStats">
+          <div class="admin-stat"><span class="as-num" id="stat-submissions">—</span><div class="as-label">Total Submissions</div></div>
+          <div class="admin-stat"><span class="as-num" id="stat-live">—</span><div class="as-label">Live / Approved</div></div>
+          <div class="admin-stat"><span class="as-num" id="stat-bids">—</span><div class="as-label">Total Bids</div></div>
+          <div class="admin-stat"><span class="as-num" id="stat-donations">—</span><div class="as-label">Donation Intents</div></div>
+        </div>
+        <div class="admin-section-title">Recent Submissions</div>
+        <div class="admin-table-wrap"><table class="admin-table" id="recentTable"><tr><td class="admin-empty">Loading…</td></tr></table></div>
+      </div>
+      <!-- Submissions -->
+      <div class="admin-panel" id="panel-submissions">
+        <div class="admin-section-title" style="margin-bottom:20px">All Artwork Submissions</div>
+        <div class="admin-table-wrap"><table class="admin-table" id="subTable"><tr><td class="admin-empty">Loading…</td></tr></table></div>
+      </div>
+      <!-- Bids -->
+      <div class="admin-panel" id="panel-bids">
+        <div class="admin-section-title" style="margin-bottom:20px">All Bids</div>
+        <div class="admin-table-wrap"><table class="admin-table" id="bidTable"><tr><td class="admin-empty">Loading…</td></tr></table></div>
+      </div>
+      <!-- Donations -->
+      <div class="admin-panel" id="panel-donations">
+        <div class="admin-section-title" style="margin-bottom:20px">All Donation Intents</div>
+        <div class="admin-table-wrap"><table class="admin-table" id="donTable"><tr><td class="admin-empty">Loading…</td></tr></table></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════
+// SCRIPT_URL, USD_RATE, ADMIN_PASS_KEY defined at top of file
+
+// ══════════════════════════════════════════
+// ARTIST TYPE
+// ══════════════════════════════════════════
+let currentType = null;
+function setType(t) {
+  ['student','teacher','external'].forEach(x => {
+    document.getElementById('tb' + x.charAt(0).toUpperCase() + x.slice(1)).classList.remove('active');
+    document.getElementById('clarif' + x.charAt(0).toUpperCase() + x.slice(1)).classList.remove('show');
+  });
+  document.getElementById('tb' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('active');
+  document.getElementById('clarif' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('show');
+  currentType = t;
+}
+
+// ══════════════════════════════════════════
+// FILE UPLOAD
+// ══════════════════════════════════════════
+let selectedFiles = [];
+function handleFiles(files) {
+  const list = Array.from(files);
+  list.forEach(f => {
+    if (selectedFiles.length < 5 && !selectedFiles.find(x => x.name === f.name)) {
+      selectedFiles.push(f);
+    }
+  });
+  renderFileList();
+}
+function renderFileList() {
+  const el = document.getElementById('fileList');
+  if (!selectedFiles.length) { el.innerHTML = ''; return; }
+  el.innerHTML = selectedFiles.map((f, i) =>
+    `<div class="file-item"><span style='font-size:0.7rem;color:var(--muted);font-family:monospace'>[img]</span><span style="flex:1;font-size:0.74rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.name}</span><span style="font-size:0.7rem;color:var(--muted);margin-left:8px">${(f.size/1024/1024).toFixed(1)}MB</span><button class="file-rm" onclick="removeFile(${i})">✕</button></div>`
+  ).join('');
+}
+function removeFile(i) {
+  selectedFiles.splice(i, 1);
+  renderFileList();
+}
+
+// ══════════════════════════════════════════
+// SUBMIT ARTWORK
+// ══════════════════════════════════════════
+async function submitArtwork() {
+  const btn = document.getElementById('submitBtn');
+  const okMsg = document.getElementById('submitOk');
+  const errMsg = document.getElementById('submitErr');
+  okMsg.classList.remove('show');
+  errMsg.classList.remove('show');
+
+  if (!currentType) { alert('Please select whether you are a student, teacher, or external artist.'); return; }
+  if (!document.getElementById('f_consent').checked) { alert('Please confirm that you own the artwork and agree to donate 100% of proceeds to Arpan Trust.'); return; }
+
+  const name = document.getElementById('f_name').value.trim();
+  const email = document.getElementById('f_email').value.trim();
+  const title = document.getElementById('f_title').value.trim();
+  const medium = document.getElementById('f_medium').value;
+  const dims = document.getElementById('f_dims').value.trim();
+  const bid = document.getElementById('f_bid').value;
+  const desc = document.getElementById('f_desc').value.trim();
+
+  if (!name || !email || !title || !medium || !dims || !bid || !desc) {
+    alert('Please fill in all required fields marked with *'); return;
+  }
+  if (name.trim().split(/\s+/).length < 2) {
+    alert('Please enter your full name (first and last name).'); return;
+  }
+
+  // Type-specific
+  let institution = '', cityCountry = '', roleYear = '', guardianConsent = '';
+  if (currentType === 'student') {
+    institution = document.getElementById('s_institution').value.trim();
+    roleYear = document.getElementById('s_year').value;
+    const sup = document.getElementById('s_supervised').value;
+    guardianConsent = document.getElementById('s_guardian').value;
+    if (!institution || !roleYear || !sup || !guardianConsent) { alert('Please complete all student details.'); return; }
+  } else if (currentType === 'teacher') {
+    institution = document.getElementById('t_institution').value.trim();
+    cityCountry = document.getElementById('t_city').value.trim();
+    roleYear = document.getElementById('t_role').value;
+    if (!institution || !cityCountry || !roleYear) { alert('School name, city/country, and role are required for teachers.'); return; }
+  } else if (currentType === 'external') {
+    cityCountry = document.getElementById('e_city').value.trim();
+    const source = document.getElementById('e_source').value;
+    if (!cityCountry || !source) { alert('Please complete city/country and how you heard about us.'); return; }
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+
+  const data = {
+    type: 'submission',
+    artistType: currentType,
+    fullName: name,
+    email: email,
+    institution: institution,
+    cityCountry: cityCountry,
+    roleYear: roleYear,
+    guardianConsent: guardianConsent,
+    artworkTitle: title,
+    medium: medium,
+    dimensions: dims,
+    startingBid: bid,
+    description: desc,
+    notes: document.getElementById('f_notes').value.trim(),
+    imageUrls: selectedFiles.map(f => f.name).join(', ') + ' (uploaded via form)'
+  };
+
+  try {
+    if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+      // Demo mode — simulate success
+      await new Promise(r => setTimeout(r, 1200));
+      okMsg.classList.add('show');
+      okMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(data)
+      });
+      const json = await res.json();
+      if (json.success) {
+        okMsg.classList.add('show');
+        okMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else {
+        throw new Error(json.error || 'Unknown error');
+      }
+    }
+  } catch(e) {
+    document.getElementById('submitErrMsg').textContent = 'Submission failed: ' + e.message + '. Please email dsitlani.art@gmail.com directly.';
+    errMsg.classList.add('show');
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Submit for Review →';
+}
+
+// ══════════════════════════════════════════
+// DONATE TIERS
+// ══════════════════════════════════════════
+let donTier = 'Sponsor a Therapy Session', donINR = '500', donUSD = '6';
+function selectTier(el, name, inr, usd) {
+  document.querySelectorAll('.donate-tier').forEach(d => d.classList.remove('active'));
+  el.classList.add('active');
+  donTier = name; donINR = inr; donUSD = usd;
+  document.getElementById('d_inr').value = inr;
+  document.getElementById('d_usd').value = usd;
+  document.getElementById('d_aed').value = +(parseInt(inr) / AED_RATE).toFixed(0);
+}
+function syncDonate(from) {
+  if (from === 'inr') {
+    const v = parseFloat(document.getElementById('d_inr').value) || 0;
+    document.getElementById('d_usd').value = v ? +(v / USD_RATE).toFixed(0) : '';
+    document.getElementById('d_aed').value = v ? +(v / AED_RATE).toFixed(0) : '';
+  } else if (from === 'usd') {
+    const v = parseFloat(document.getElementById('d_usd').value) || 0;
+    document.getElementById('d_inr').value = v ? +(v * USD_RATE).toFixed(0) : '';
+    document.getElementById('d_aed').value = v ? +(v * USD_RATE / AED_RATE).toFixed(0) : '';
+  } else if (from === 'aed') {
+    const v = parseFloat(document.getElementById('d_aed').value) || 0;
+    document.getElementById('d_inr').value = v ? +(v * AED_RATE).toFixed(0) : '';
+    document.getElementById('d_usd').value = v ? +(v * AED_RATE / USD_RATE).toFixed(0) : '';
+  }
+}
+
+async function submitDonation() {
+  const okMsg = document.getElementById('donateOk');
+  const errMsg = document.getElementById('donateErr');
+  okMsg.classList.remove('show'); errMsg.classList.remove('show');
+
+  const name = document.getElementById('d_name').value.trim();
+  const email = document.getElementById('d_email').value.trim();
+  const inr = document.getElementById('d_inr').value;
+  if (!name || !email || !inr) { alert('Please fill in your name, email and donation amount.'); return; }
+  if (name.trim().split(/\s+/).length < 2) { alert('Please enter your full name (first and last name).'); return; }
+
+  const data = {
+    type: 'donation',
+    donorName: name,
+    donorEmail: email,
+    amountINR: inr,
+    amountUSD: document.getElementById('d_usd').value || +(inr / USD_RATE).toFixed(0),
+    amountAED: document.getElementById('d_aed').value || +(inr / AED_RATE).toFixed(0),
+    tier: donTier,
+    message: document.getElementById('d_msg').value.trim()
+  };
+
+  try {
+    if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+      await new Promise(r => setTimeout(r, 800));
+      okMsg.classList.add('show');
+    } else {
+      const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
+      const json = await res.json();
+      if (json.success) okMsg.classList.add('show');
+      else throw new Error(json.error);
+    }
+  } catch(e) { errMsg.classList.add('show'); }
+}
+
+// ══════════════════════════════════════════
+// BID MODAL
+// ══════════════════════════════════════════
+let bidState = {};
+function openBid(title, artist, currentINR, row) {
+  const minBid = Math.ceil(currentINR / 100) * 100 + 100;
+  bidState = { title, artist, currentINR, minBid, row };
+  document.getElementById('m_title').textContent = title;
+  document.getElementById('m_artist').textContent = artist;
+  document.getElementById('m_current').textContent = '₹' + currentINR.toLocaleString() + ' / $' + Math.round(currentINR / USD_RATE) + ' / AED ' + Math.round(currentINR / AED_RATE);
+  document.getElementById('m_min').textContent = '₹' + minBid.toLocaleString() + ' / $' + Math.round(minBid / USD_RATE) + ' / AED ' + Math.round(minBid / AED_RATE);
+  document.getElementById('m_bidDisplay').textContent = '—';
+  document.getElementById('m_inr').value = '';
+  document.getElementById('m_aed').value = '';
+  document.getElementById('m_usd').value = '';
+  document.getElementById('m_name').value = '';
+  document.getElementById('m_email').value = '';
+  document.getElementById('bidOk').classList.remove('show');
+  document.getElementById('bidErr').classList.remove('show');
+  document.getElementById('bidOverlay').classList.add('open');
+}
+function syncBid(from) {
+  if (from === 'inr') {
+    const v = parseFloat(document.getElementById('m_inr').value) || 0;
+    document.getElementById('m_usd').value = v ? +(v / USD_RATE).toFixed(0) : '';
+    document.getElementById('m_bidDisplay').textContent = v ? '₹' + v.toLocaleString() + ' / $' + +(v / USD_RATE).toFixed(0) : '—';
+  } else {
+    const v = parseFloat(document.getElementById('m_usd').value) || 0;
+    document.getElementById('m_inr').value = v ? +(v * USD_RATE).toFixed(0) : '';
+    document.getElementById('m_bidDisplay').textContent = v ? '₹' + (v * USD_RATE).toLocaleString() + ' / $' + v : '—';
+  }
+}
+async function confirmBid() {
+  const inr = parseFloat(document.getElementById('m_inr').value) || 0;
+  const name = document.getElementById('m_name').value.trim();
+  const email = document.getElementById('m_email').value.trim();
+  const errMsg = document.getElementById('bidErr');
+  errMsg.classList.remove('show');
+
+  if (inr < bidState.minBid) {
+    document.getElementById('bidErrMsg').textContent = 'Minimum bid is ₹' + bidState.minBid.toLocaleString();
+    errMsg.classList.add('show'); return;
+  }
+  if (!name || !email) { alert('Please enter your name and email.'); return; }
+  if (name.trim().split(/\s+/).length < 2) { alert('Please enter your full name (first and last name).'); return; }
+
+  const data = {
+    type: 'bid',
+    artworkTitle: bidState.title,
+    bidderName: name,
+    bidderEmail: email,
+    bidINR: inr,
+    bidUSD: Math.round(inr / USD_RATE),
+    submissionRow: bidState.row
+  };
+
+  try {
+    if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+      await new Promise(r => setTimeout(r, 700));
+      document.getElementById('bidOk').classList.add('show');
+    } else {
+      const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
+      const json = await res.json();
+      if (json.success) document.getElementById('bidOk').classList.add('show');
+      else throw new Error(json.error);
+    }
+  } catch(e) {
+    document.getElementById('bidErrMsg').textContent = 'Bid failed: ' + e.message;
+    errMsg.classList.add('show');
+  }
+}
+function closeBid() { document.getElementById('bidOverlay').classList.remove('open'); }
+function closeBidOut(e) { if (e.target === document.getElementById('bidOverlay')) closeBid(); }
+
+// ══════════════════════════════════════════
+// LOAD LIVE AUCTIONS
+// ══════════════════════════════════════════
+async function loadAuctions() {
+  try {
+    if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+      // Demo — show empty state
+      document.getElementById('auctionLoading').style.display = 'none';
+      document.getElementById('auctionEmpty').style.display = 'block';
+      document.getElementById('heroAuctions').innerHTML = '<div class="hero-empty">Submissions under review.<br>Live auctions coming soon.</div>';
+      return;
+    }
+    const res = await fetch(SCRIPT_URL + '?action=getApprovedArtworks');
+    const json = await res.json();
+    document.getElementById('auctionLoading').style.display = 'none';
+    if (!json.success || !json.artworks.length) {
+      document.getElementById('auctionEmpty').style.display = 'block';
+      document.getElementById('heroAuctions').innerHTML = '<div class="hero-empty">Submissions under review.<br>Live auctions coming soon.</div>';
+      return;
+    }
+    renderAuctions(json.artworks);
+  } catch(e) {
+    document.getElementById('auctionLoading').innerHTML = '<div style="color:var(--muted);font-size:0.82rem">Could not load auctions. <a href="#submit" style="color:var(--accent)">Submit your artwork</a> to be first.</div>';
+  }
+}
+
+function renderAuctions(artworks) {
+  const grid = document.getElementById('auctionGrid');
+  const hero = document.getElementById('heroAuctions');
+  grid.innerHTML = '';
+  hero.innerHTML = '';
+
+  artworks.forEach((art, i) => {
+    const now = new Date();
+    const end = art.auctionEnd ? new Date(art.auctionEnd) : null;
+    const isLive = art.status === 'Live' && end && end > now;
+    const isClosed = end && end <= now;
+    const statusLabel = isClosed ? 'Ended' : isLive ? 'Live' : 'Approved';
+    const statusClass = isClosed ? 'st-closed' : isLive ? 'st-live' : 'st-soon';
+    const timeLeft = end && end > now ? getTimeLeft(end) : (isClosed ? 'Ended' : 'Opening Soon');
+    const currentBid = parseFloat(art.currentBid) || parseFloat(art.startingBid) || 0;
+    const startBid = parseFloat(art.startingBid) || 0;
+    const artistLabel = art.artistType.charAt(0).toUpperCase() + art.artistType.slice(1) + ' Artist';
+
+    // Auction card
+    const card = document.createElement('div');
+    card.className = 'auction-card';
+    card.innerHTML = `
+      <div class="ac-img">
+        <span style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)">Artwork Preview</span>
+        <span class="ac-status ${statusClass}">${isClosed ? '' : '● '}${statusLabel}</span>
+        <span class="ac-atype">${artistLabel}</span>
+      </div>
+      <div class="ac-body">
+        <div class="ac-type">${artistLabel}${art.cityCountry ? ' — ' + art.cityCountry : ''}</div>
+        <div class="ac-title">${art.artworkTitle}</div>
+        <div class="ac-desc">${art.description}</div>
+        <div class="ac-footer">
+          <div>
+            <div class="ac-bid-lbl">${currentBid > startBid ? 'Current Bid' : 'Starting Bid'}</div>
+            <div class="ac-bid-val">₹${currentBid.toLocaleString()} <small>/ $${Math.round(currentBid / USD_RATE)} / AED ${Math.round(currentBid / AED_RATE)}</small></div>
+          </div>
+          <div class="ac-timer">
+            <div class="ac-timer-lbl">${isClosed ? 'Status' : end ? 'Ends in' : 'Timer'}</div>
+            <div class="ac-timer-val" ${end && !isClosed ? 'data-end="' + art.auctionEnd + '"' : ''}>${timeLeft}</div>
+          </div>
+        </div>
+        <button class="ac-bid-btn" ${isClosed ? 'disabled' : ''} onclick="${isClosed ? '' : `openBid('${art.artworkTitle.replace(/'/g,"\\'")}','${(art.fullName || 'Artist').replace(/'/g,"\\'")}',${currentBid},${art.row})`}">${isClosed ? 'Auction Ended' : 'Place a Bid →'}</button>
+      </div>`;
+    grid.appendChild(card);
+
+    // Hero preview (first 3 live only)
+    if (i < 3 && isLive) {
+      const ha = document.createElement('div');
+      ha.className = 'hero-artwork';
+      ha.onclick = () => openBid(art.artworkTitle, art.fullName || 'Artist', currentBid, art.row);
+      ha.innerHTML = `
+        <div class="ha-thumb"><span style="font-size:0.6rem;color:var(--muted);letter-spacing:0.08em">IMG</span></div>
+        <div class="ha-info">
+          <div class="ha-type">${artistLabel}</div>
+          <div class="ha-title">${art.artworkTitle}</div>
+          <div class="ha-artist">by ${art.fullName || 'Anonymous'}</div>
+          <div class="ha-bid">Bid: <span>₹${currentBid.toLocaleString()}</span></div>
+        </div>
+        <span class="ha-status hs-live">Live</span>`;
+      hero.appendChild(ha);
+    }
+  });
+
+  if (!hero.children.length) {
+    hero.innerHTML = '<div class="hero-empty">Submissions under review.<br>Live auctions coming soon.</div>';
+  }
+  startTimers();
+}
+
+function getTimeLeft(end) {
+  const diff = end - new Date();
+  if (diff <= 0) return 'Ended';
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  if (d > 0) return d + 'd ' + h + 'h';
+  if (h > 0) return h + 'h ' + m + 'm';
+  return m + 'm';
+}
+
+function startTimers() {
+  setInterval(() => {
+    document.querySelectorAll('.ac-timer-val[data-end]').forEach(el => {
+      const end = new Date(el.dataset.end);
+      el.textContent = getTimeLeft(end);
+    });
+  }, 60000);
+}
+
+// ══════════════════════════════════════════
+// UPI COPY
+// ══════════════════════════════════════════
+function copyUPI() {
+  navigator.clipboard.writeText('arpancharitabletrust@upi').then(() => {
+    const btn = document.querySelector('.upi-copy');
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+
+// ══════════════════════════════════════════
+// ADMIN
+// ══════════════════════════════════════════
+let adminData = null;
+function openAdmin(e) {
+  e.preventDefault();
+  document.getElementById('adminOverlay').classList.add('open');
+  document.getElementById('loginInput').value = '';
+  document.getElementById('loginErr').style.display = 'none';
+  document.getElementById('adminLogin').style.display = 'flex';
+  document.getElementById('adminDash').style.display = 'none';
+}
+function closeAdmin() {
+  document.getElementById('adminOverlay').classList.remove('open');
+}
+function doLogin() {
+  const pw = document.getElementById('loginInput').value;
+  if (pw === ADMIN_PASS_KEY) {
+    document.getElementById('adminLogin').style.display = 'none';
+    document.getElementById('adminDash').style.display = 'flex';
+    loadAdminData();
+  } else {
+    document.getElementById('loginErr').style.display = 'block';
+  }
+}
+
+async function loadAdminData() {
+  document.getElementById('recentTable').innerHTML = '<tr><td class="admin-loading">Loading…</td></tr>';
+  document.getElementById('subTable').innerHTML = '<tr><td class="admin-loading">Loading…</td></tr>';
+  document.getElementById('bidTable').innerHTML = '<tr><td class="admin-loading">Loading…</td></tr>';
+  document.getElementById('donTable').innerHTML = '<tr><td class="admin-loading">Loading…</td></tr>';
+
+  if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+    document.getElementById('stat-submissions').textContent = '0';
+    document.getElementById('stat-live').textContent = '0';
+    document.getElementById('stat-bids').textContent = '0';
+    document.getElementById('stat-donations').textContent = '0';
+    const empty = '<tr><td colspan="10" class="admin-empty">No data yet. Connect your Apps Script to see live data.</td></tr>';
+    ['recentTable','subTable','bidTable','donTable'].forEach(id => document.getElementById(id).innerHTML = empty);
+    return;
+  }
+
+  try {
+    const res = await fetch(SCRIPT_URL + '?action=getAdmin&password=' + ADMIN_PASS_KEY);
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error);
+    adminData = json.data;
+    renderAdminData();
+  } catch(e) {
+    const err = `<tr><td colspan="10" class="admin-empty" style="color:#f87171">Error loading data: ${e.message}</td></tr>`;
+    ['recentTable','subTable','bidTable','donTable'].forEach(id => document.getElementById(id).innerHTML = err);
+  }
+}
+
+function renderAdminData() {
+  const d = adminData;
+  const live = d.submissions.filter(s => s.status === 'Live' || s.status === 'Approved').length;
+  document.getElementById('stat-submissions').textContent = d.submissions.length;
+  document.getElementById('stat-live').textContent = live;
+  document.getElementById('stat-bids').textContent = d.bids.length;
+  document.getElementById('stat-donations').textContent = d.donations.length;
+
+  // Submissions table
+  const subCols = ['Timestamp','Status','Type','Name','Email','Institution','Title','Medium','Dims','Starting ₹','Current ₹','Bids','Auction End','Actions'];
+  renderTable('subTable', subCols, d.submissions.map(s => [
+    s.timestamp, statusPill(s.status), s.artistType, s.fullName, s.email,
+    s.institution || s.cityCountry, s.artworkTitle, s.medium, s.dimensions,
+    '₹' + (s.startingBid || '—'), '₹' + (s.currentBid || '—'), s.bidCount || 0,
+    s.auctionEnd ? `<input type="datetime-local" class="timer-input" value="${toDatetimeLocal(s.auctionEnd)}" onchange="setTimer(${s.row},this.value)">` : `<input type="datetime-local" class="timer-input" onchange="setTimer(${s.row},this.value)">`,
+    `<button class="admin-action-btn approve" onclick="updateStatus(${s.row},'Approved')">Approve</button><button class="admin-action-btn live" onclick="updateStatus(${s.row},'Live')">Go Live</button><button class="admin-action-btn reject" onclick="updateStatus(${s.row},'Rejected')">Reject</button><button class="admin-action-btn close" onclick="updateStatus(${s.row},'Closed')">Close</button>`
+  ]));
+
+  // Recent (overview)
+  renderTable('recentTable', ['Timestamp','Status','Name','Type','Title','Medium','Starting ₹','Actions'],
+    d.submissions.slice(-10).reverse().map(s => [
+      s.timestamp, statusPill(s.status), s.fullName, s.artistType, s.artworkTitle, s.medium,
+      '₹' + (s.startingBid || '—'),
+      `<button class="admin-action-btn approve" onclick="updateStatus(${s.row},'Approved');showAdminTab('submissions')">Approve</button><button class="admin-action-btn live" onclick="updateStatus(${s.row},'Live');showAdminTab('submissions')">Live</button><button class="admin-action-btn reject" onclick="updateStatus(${s.row},'Rejected');showAdminTab('submissions')">Reject</button>`
+    ]));
+
+  // Bids
+  renderTable('bidTable', ['Timestamp','Artwork','Bidder','Email','Bid ₹','Bid $'],
+    d.bids.map(b => [b.timestamp, b.artworkTitle, b.bidderName, b.bidderEmail, '₹' + b.bidINR, '$' + b.bidUSD]));
+
+  // Donations
+  renderTable('donTable', ['Timestamp','Name','Email','Amount ₹','Amount $','Tier','Message'],
+    d.donations.map(d => [d.timestamp, d.donorName, d.donorEmail, '₹' + d.amountINR, '$' + d.amountUSD, d.tier, d.message || '—']));
+}
+
+function renderTable(id, cols, rows) {
+  const tbl = document.getElementById(id);
+  if (!rows.length) { tbl.innerHTML = '<tr><td colspan="' + cols.length + '" class="admin-empty">No data yet.</td></tr>'; return; }
+  tbl.innerHTML = '<tr>' + cols.map(c => `<th>${c}</th>`).join('') + '</tr>' +
+    rows.map(row => '<tr>' + row.map(cell => `<td>${cell}</td>`).join('') + '</tr>').join('');
+}
+
+function statusPill(s) {
+  const map = { 'Pending Review': 'sp-pending', 'Approved': 'sp-approved', 'Live': 'sp-live', 'Rejected': 'sp-rejected', 'Closed': 'sp-closed' };
+  return `<span class="status-pill ${map[s] || 'sp-pending'}">${s}</span>`;
+}
+
+function toDatetimeLocal(str) {
+  if (!str) return '';
+  try { return new Date(str).toISOString().slice(0, 16); } catch(e) { return ''; }
+}
+
+async function updateStatus(row, status) {
+  if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') { alert('Connect Apps Script first.'); return; }
+  try {
+    await fetch(`${SCRIPT_URL}?action=updateStatus&password=${ADMIN_PASS_KEY}&row=${row}&status=${encodeURIComponent(status)}`);
+    await loadAdminData();
+    await loadAuctions();
+  } catch(e) { alert('Failed to update: ' + e.message); }
+}
+
+async function setTimer(row, endDate) {
+  if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') { alert('Connect Apps Script first.'); return; }
+  try {
+    await fetch(`${SCRIPT_URL}?action=updateTimer&password=${ADMIN_PASS_KEY}&row=${row}&endDate=${encodeURIComponent(endDate)}`);
+  } catch(e) { alert('Failed to set timer: ' + e.message); }
+}
+
+function showAdminTab(name) {
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.querySelectorAll('.admin-tab').forEach(t => { if (t.textContent.toLowerCase().includes(name)) t.classList.add('active'); });
+}
+
+// ══════════════════════════════════════════
+// SCROLL REVEAL
+// ══════════════════════════════════════════
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revealObserver.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(r => revealObserver.observe(r));
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+loadAuctions();
+</script>
+</body>
+</html>
