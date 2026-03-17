@@ -1320,6 +1320,12 @@ async function submitArtwork() {
       for (let i = 0; i < selectedFiles.length; i++) {
         const file = selectedFiles[i];
         btn.textContent = `Uploading image ${i+1} of ${selectedFiles.length}…`;
+
+        // Check file size — Apps Script has a 50MB POST limit, warn at 8MB
+        if (file.size > 8 * 1024 * 1024) {
+          throw new Error(`Image "${file.name}" is too large (${(file.size/1024/1024).toFixed(1)}MB). Please resize it to under 8MB and try again.`);
+        }
+
         const base64 = await fileToBase64(file);
         const imgData = {
           type: 'image',
@@ -1329,11 +1335,20 @@ async function submitArtwork() {
           artworkTitle: title,
           artistName: name
         };
-        const res = await fetch(SCRIPT_URL, { method: 'POST', mode: 'cors', body: JSON.stringify(imgData) });
-        const json = await res.json();
-        if (json.success) {
-          uploadedLinks.push(json.viewUrl);
-          if (json.folderUrl) driveFolderUrl = json.folderUrl;
+
+        let imgRes, imgJson;
+        try {
+          imgRes = await fetch(SCRIPT_URL, { method: 'POST', mode: 'cors', body: JSON.stringify(imgData) });
+          imgJson = await imgRes.json();
+        } catch(fetchErr) {
+          throw new Error(`Image upload failed for "${file.name}": ${fetchErr.message}. Check your internet connection and try again.`);
+        }
+
+        if (imgJson.success) {
+          uploadedLinks.push(imgJson.viewUrl);
+          if (imgJson.folderUrl) driveFolderUrl = imgJson.folderUrl;
+        } else {
+          throw new Error(`Drive upload failed for "${file.name}": ${imgJson.error || 'Unknown error'}. Please try again or contact dsitlani.art@gmail.com`);
         }
       }
       imageLinks = uploadedLinks.join('\n');
@@ -1358,7 +1373,7 @@ async function submitArtwork() {
       description: desc,
       notes: document.getElementById('f_notes').value.trim(),
       driveFolderUrl: driveFolderUrl,
-      imageLinks: imageLinks || selectedFiles.map(f => f.name).join(', ')
+      imageLinks: imageLinks
     };
 
     if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
