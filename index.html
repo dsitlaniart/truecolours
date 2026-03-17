@@ -71,8 +71,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(250,250,248,
 .hero-right{background:var(--off);display:flex;flex-direction:column;justify-content:center;padding:48px;gap:12px;position:relative;overflow:hidden}
 .hero-right-title{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
 #heroAuctions{display:flex;flex-direction:column;gap:12px}
-.hero-artwork{background:white;border:1px solid var(--border);padding:16px;display:flex;gap:16px;align-items:center;cursor:pointer;transition:box-shadow .2s,transform .2s}
-.hero-artwork:hover{box-shadow:0 8px 24px rgba(0,0,0,0.08);transform:translateY(-2px)}
+.hero-artwork{background:white;border:1px solid var(--border);padding:16px;display:flex;gap:16px;align-items:center;cursor:pointer;transition:box-shadow 0.3s cubic-bezier(0.22,1,0.36,1),transform 0.3s cubic-bezier(0.22,1,0.36,1);box-shadow:0 2px 12px rgba(0,0,0,0.04)}
+.hero-artwork:hover{box-shadow:0 12px 36px rgba(0,0,0,0.1);transform:translateY(-3px) scale(1.01)}
 .ha-thumb{width:64px;height:64px;background:var(--off);border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem;overflow:hidden}
 .ha-thumb img{width:100%;height:100%;object-fit:cover}
 .ha-info{flex:1;min-width:0}
@@ -143,8 +143,8 @@ section{padding:88px 0}
 .auctions-hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:40px;flex-wrap:wrap;gap:16px}
 .auctions-hdr-right{font-size:0.76rem;color:var(--muted);max-width:240px;line-height:1.6;text-align:right}
 #auctionGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.auction-card{background:white;border:1px solid var(--border);overflow:hidden;cursor:pointer;transition:box-shadow .25s,transform .25s}
-.auction-card:hover{box-shadow:0 12px 40px rgba(0,0,0,0.08);transform:translateY(-3px)}
+.auction-card{background:white;border:1px solid var(--border);overflow:hidden;cursor:pointer;transition:box-shadow 0.35s cubic-bezier(0.22,1,0.36,1),transform 0.35s cubic-bezier(0.22,1,0.36,1)}
+.auction-card:hover{box-shadow:0 16px 48px rgba(0,0,0,0.1)}
 .ac-img{aspect-ratio:4/3;position:relative;background:var(--off);display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:3rem}
 .ac-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
 .ac-status{position:absolute;top:10px;right:10px;font-size:0.56rem;letter-spacing:0.14em;text-transform:uppercase;padding:3px 8px;font-weight:600}
@@ -383,9 +383,262 @@ footer{background:var(--ink);color:rgba(255,255,255,0.4);padding:56px 0 28px}
 .f-reg{font-size:0.67rem;color:rgba(255,255,255,0.18)}
 
 /* ── REVEAL ── */
-.reveal{opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s ease}
-.reveal.in{opacity:1;transform:translateY(0)}
-.rd1{transition-delay:.1s}.rd2{transition-delay:.2s}.rd3{transition-delay:.3s}
+
+/* ══════════════════════════════════════════
+   AMBIENT GRADIENT + 3D DEPTH SYSTEM
+   Colors stay on-brand: orange, black, white
+   ══════════════════════════════════════════ */
+
+/* Hero ambient gradient orbs */
+.hero-bg {
+  position:absolute; inset:0; overflow:hidden; z-index:0; pointer-events:none;
+}
+.hero-bg-orb {
+  position:absolute; border-radius:50%;
+  filter:blur(80px); opacity:0; mix-blend-mode:multiply;
+  animation:orbFloat 30s cubic-bezier(0.45,0,0.55,1) infinite;
+  will-change:transform,opacity;
+}
+.hero-bg-orb:nth-child(1){
+  width:600px; height:600px;
+  background:radial-gradient(circle, rgba(200,83,26,0.18) 0%, transparent 70%);
+  top:-10%; left:-5%;
+  animation-duration:32s; animation-delay:0s; opacity:0.7;
+}
+.hero-bg-orb:nth-child(2){
+  width:500px; height:500px;
+  background:radial-gradient(circle, rgba(184,146,42,0.12) 0%, transparent 70%);
+  top:20%; right:-8%;
+  animation-duration:38s; animation-delay:-8s; opacity:0.5;
+}
+.hero-bg-orb:nth-child(3){
+  width:400px; height:400px;
+  background:radial-gradient(circle, rgba(200,83,26,0.1) 0%, transparent 70%);
+  bottom:-5%; left:30%;
+  animation-duration:26s; animation-delay:-15s; opacity:0.6;
+}
+@keyframes orbFloat {
+  0%   { transform: translate(0px, 0px) scale(1); }
+  20%  { transform: translate(30px,-25px) scale(1.04); }
+  45%  { transform: translate(-20px, 35px) scale(0.97); }
+  70%  { transform: translate(25px, 15px) scale(1.03); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+/* Hero left gets relative positioning for orbs */
+.hero-left { position:relative; z-index:1; }
+.hero-left > *:not(.hero-bg) { position:relative; z-index:2; }
+
+/* ── MAGNETIC BUTTON SYSTEM ── */
+.btn-magnetic {
+  position: relative;
+  display: inline-block;
+  border-radius: 4px;
+  overflow: visible;
+  transform-style: preserve-3d;
+  transition: box-shadow 0.3s cubic-bezier(0.22,1,0.36,1);
+}
+.btn-magnetic::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 6px;
+  background: transparent;
+  box-shadow: 0 0 0 0 rgba(200,83,26,0);
+  transition: box-shadow 0.3s cubic-bezier(0.22,1,0.36,1);
+  pointer-events: none;
+}
+.btn-magnetic:hover::after {
+  box-shadow: 0 8px 32px rgba(200,83,26,0.28);
+}
+.btn-magnetic.btn-outline:hover::after {
+  box-shadow: 0 8px 32px rgba(15,14,12,0.14);
+}
+
+/* ── SCROLL REVEAL — upgraded easing ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 700ms cubic-bezier(0.22,1,0.36,1),
+    transform 700ms cubic-bezier(0.22,1,0.36,1);
+  will-change: opacity, transform;
+}
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Stagger siblings */
+.reveal.rd1 { transition-delay: 80ms; }
+.reveal.rd2 { transition-delay: 160ms; }
+.reveal.rd3 { transition-delay: 240ms; }
+
+/* ── 3D CARD TILT SYSTEM ── */
+.tilt-card {
+  transform-style: preserve-3d;
+  transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+  transition: transform 0.1s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s ease;
+  will-change: transform;
+}
+.tilt-card:hover {
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+}
+
+/* ── AUCTION CARD 3D LIFT ── */
+.auction-card {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.auction-card .ac-img img {
+  transition: transform 0.6s cubic-bezier(0.22,1,0.36,1);
+}
+.auction-card:hover .ac-img img {
+  transform: scale(1.04);
+}
+
+/* ── SECTION DEPTH LINES (subtle 3d layering feel) ── */
+.impact-strip {
+  position: relative;
+  overflow: hidden;
+}
+.impact-strip::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(200,83,26,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(184,146,42,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* ── NAV 3D GLASS DEPTH ── */
+nav {
+  box-shadow: 0 1px 0 var(--border), 0 4px 24px rgba(15,14,12,0.04);
+}
+
+/* ── HERO RIGHT DEPTH ── */
+.hero-right {
+  position: relative;
+  overflow: hidden;
+}
+.hero-right::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(200,83,26,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-right > * { position: relative; z-index: 1; }
+
+/* ── TICKER DEPTH ── */
+.ticker {
+  position: relative;
+}
+.ticker::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0; width: 80px;
+  background: linear-gradient(to right, var(--ink), transparent);
+  z-index: 2; pointer-events: none;
+}
+.ticker::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0; width: 80px;
+  background: linear-gradient(to left, var(--ink), transparent);
+  z-index: 2; pointer-events: none;
+}
+
+/* ── ABOUT QUOTE 3D ACCENT ── */
+.about-quote {
+  position: relative;
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+}
+.about-quote:hover {
+  transform: translateX(4px);
+}
+
+/* ── STAT ROW HOVER ── */
+.stat-row {
+  transition: background 0.2s ease, transform 0.3s cubic-bezier(0.22,1,0.36,1);
+}
+.stat-row:hover {
+  background: var(--off) !important;
+  transform: translateX(3px);
+}
+
+/* ── DONATE TIER 3D ── */
+.donate-tier {
+  transition: border-color 0.2s, box-shadow 0.3s cubic-bezier(0.22,1,0.36,1), transform 0.3s cubic-bezier(0.22,1,0.36,1);
+}
+.donate-tier:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.07);
+}
+.donate-tier.active {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(200,83,26,0.12);
+}
+
+/* ── PROG ITEM 3D ── */
+.prog-item {
+  transition: background 0.2s, transform 0.3s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s ease;
+}
+.prog-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  z-index: 1;
+  position: relative;
+}
+
+/* ── HOW STEP 3D ── */
+.how-step {
+  transition: background 0.2s, transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s ease;
+}
+.how-step:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.07);
+  background: white !important;
+  z-index: 1; position: relative;
+}
+
+/* ── SIDEBAR CARD 3D ── */
+.s-card {
+  transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s ease;
+}
+.s-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+/* ── FORM BOX SHADOW ── */
+.form-box {
+  box-shadow: 0 2px 0 var(--border), 0 8px 40px rgba(15,14,12,0.04);
+  transition: box-shadow 0.3s ease;
+}
+.form-box:focus-within {
+  box-shadow: 0 2px 0 rgba(200,83,26,0.2), 0 12px 48px rgba(15,14,12,0.07);
+}
+
+/* ── FOOTER DEPTH ── */
+footer {
+  position: relative;
+}
+footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(to right, transparent, rgba(200,83,26,0.4), transparent);
+}
+
+/* ── REDUCE MOTION SAFETY ── */
+@media (prefers-reduced-motion: reduce) {
+  .hero-bg-orb { animation: none !important; opacity: 0.4 !important; }
+  .reveal { transition-duration: 0ms !important; }
+  .tilt-card, .btn-magnetic { transition: none !important; }
+}
+
 
 /* ── RESPONSIVE ── */
 @media(max-width:1024px){
@@ -427,8 +680,8 @@ footer{background:var(--ink);color:rgba(255,255,255,0.4);padding:56px 0 28px}
 <!-- CONFIG — paste your Apps Script URL here after deploying -->
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbygG1E9uJg10_X60zUJyyUDWMVryBSJd6jA2Cb2c-e43bwpsMBl1yOvQNa_voT27f28MA/exec';
-const USD_RATE = 83;
-const AED_RATE = 22.7; // 1 AED = approx 22.7 INR
+const USD_RATE = 83;      // 1 USD = approx 83 INR
+const AED_RATE = 22.7;    // 1 AED = approx 22.7 INR
 const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
 </script>
 
@@ -445,8 +698,8 @@ const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
       <a href="#submit">Submit</a>
       <a href="#donate">Donate</a>
       <a href="#" onclick="openAdmin(event)" style="color:var(--muted)">Admin</a>
-      <a href="#submit" class="nav-outline">Submit Artwork</a>
-      <a href="#donate" class="nav-cta">Donate</a>
+      <a href="#submit" class="nav-outline btn-magnetic" data-magnetic>Submit Artwork</a>
+      <a href="#donate" class="nav-cta btn-magnetic" data-magnetic>Donate</a>
     </div>
   </div>
 </nav>
@@ -469,12 +722,18 @@ const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
 <!-- HERO -->
 <section class="hero">
   <div class="hero-left">
+    <!-- Ambient gradient orbs -->
+    <div class="hero-bg" aria-hidden="true">
+      <div class="hero-bg-orb"></div>
+      <div class="hero-bg-orb"></div>
+      <div class="hero-bg-orb"></div>
+    </div>
     <p class="hero-eyebrow">Open to students, teachers &amp; artists worldwide</p>
     <h1>An <em>International</em><br>Art Auction for<br>Arpan Trust</h1>
     <p class="hero-sub">Submit original artwork, bid on extraordinary pieces, and help fund the education and care of children with disabilities at Arpan Trust, India. Every participating artist receives a certificate of contribution.</p>
     <div class="hero-actions">
-      <a href="#auctions" class="btn btn-accent">Browse Auctions</a>
-      <a href="#submit" class="btn btn-outline">Submit Artwork</a>
+      <a href="#auctions" class="btn btn-accent btn-magnetic" data-magnetic>Browse Auctions</a>
+      <a href="#submit" class="btn btn-outline btn-magnetic" data-magnetic>Submit Artwork</a>
     </div>
     <div class="hero-badges">
       <div class="badge"><span class="bi">✓</span> 12A &amp; 80G Certified</div>
@@ -517,9 +776,9 @@ const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
       </div>
       <div class="reveal rd2">
         <div class="about-stats">
-          <div class="stat-row"><span class="stat-num">98%</span><div><div class="stat-lbl">Resource Allocation</div><div class="stat-desc">98% of all funds raised go directly to programme services — not administration.</div></div></div>
-          <div class="stat-row"><span class="stat-num">6–35</span><div><div class="stat-lbl">Ages Served</div><div class="stat-desc">Arpan serves individuals from age 6 through 35, offering continuity of care across all life stages.</div></div></div>
-          <div class="stat-row"><span class="stat-num">30+</span><div><div class="stat-lbl">Years of Service</div><div class="stat-desc">Founded in 1993 — over three decades of unbroken, community-driven care in Gujarat, India.</div></div></div>
+          <div class="stat-row tilt-card"><span class="stat-num">98%</span><div><div class="stat-lbl">Resource Allocation</div><div class="stat-desc">98% of all funds raised go directly to programme services — not administration.</div></div></div>
+          <div class="stat-row tilt-card"><span class="stat-num">6–35</span><div><div class="stat-lbl">Ages Served</div><div class="stat-desc">Arpan serves individuals from age 6 through 35, offering continuity of care across all life stages.</div></div></div>
+          <div class="stat-row tilt-card"><span class="stat-num">30+</span><div><div class="stat-lbl">Years of Service</div><div class="stat-desc">Founded in 1993 — over three decades of unbroken, community-driven care in Gujarat, India.</div></div></div>
           <div class="cert-block">
             <div class="cert-title">Certifications</div>
             <div class="cert-row">Recognised by the Government of Gujarat as an Institution for Persons With Disability</div>
@@ -532,14 +791,14 @@ const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
     <div class="s-eye reveal" style="margin-top:72px">Programmes</div>
     <h3 class="s-title reveal" style="font-size:1.7rem">What Arpan does <em>every day</em></h3>
     <div class="prog-grid reveal">
-      <div class="prog-item"><span class="prog-icon">SE</span><div class="prog-name">Special Education</div><div class="prog-desc">Tailored learning aligned to each individual's cognitive profile.</div></div>
-      <div class="prog-item"><span class="prog-icon">SL</span><div class="prog-name">Speech &amp; Language</div><div class="prog-desc">Therapy to develop communication and self-expression.</div></div>
-      <div class="prog-item"><span class="prog-icon">PT</span><div class="prog-name">Physiotherapy</div><div class="prog-desc">Movement therapy to enhance motor skills and independence.</div></div>
-      <div class="prog-item"><span class="prog-icon">SI</span><div class="prog-name">Sensory Integration</div><div class="prog-desc">Therapeutic environments for processing sensory input.</div></div>
-      <div class="prog-item"><span class="prog-icon">AT</span><div class="prog-name">Art Therapy</div><div class="prog-desc">Creative expression as a tool for focus and confidence.</div></div>
-      <div class="prog-item"><span class="prog-icon">MU</span><div class="prog-name">Music</div><div class="prog-desc">Vocal and instrumental learning enriching development.</div></div>
-      <div class="prog-item"><span class="prog-icon">SP</span><div class="prog-name">Sports</div><div class="prog-desc">Physical activity building teamwork and well-being.</div></div>
-      <div class="prog-item"><span class="prog-icon">VT</span><div class="prog-name">Vocational Training</div><div class="prog-desc">Skills preparing every individual for financial independence.</div></div>
+      <div class="prog-item tilt-card"><span class="prog-icon">SE</span><div class="prog-name">Special Education</div><div class="prog-desc">Tailored learning aligned to each individual's cognitive profile.</div></div>
+      <div class="prog-item tilt-card"><span class="prog-icon">SL</span><div class="prog-name">Speech &amp; Language</div><div class="prog-desc">Therapy to develop communication and self-expression.</div></div>
+      <div class="prog-item tilt-card"><span class="prog-icon">PT</span><div class="prog-name">Physiotherapy</div><div class="prog-desc">Movement therapy to enhance motor skills and independence.</div></div>
+      <div class="prog-item tilt-card"><span class="prog-icon">SI</span><div class="prog-name">Sensory Integration</div><div class="prog-desc">Therapeutic environments for processing sensory input.</div></div>
+      <div class="prog-item tilt-card"><span class="prog-icon">AT</span><div class="prog-name">Art Therapy</div><div class="prog-desc">Creative expression as a tool for focus and confidence.</div></div>
+      <div class="prog-item tilt-card"><span class="prog-icon">MU</span><div class="prog-name">Music</div><div class="prog-desc">Vocal and instrumental learning enriching development.</div></div>
+      <div class="prog-item tilt-card"><span class="prog-icon">SP</span><div class="prog-name">Sports</div><div class="prog-desc">Physical activity building teamwork and well-being.</div></div>
+      <div class="prog-item tilt-card"><span class="prog-icon">VT</span><div class="prog-name">Vocational Training</div><div class="prog-desc">Skills preparing every individual for financial independence.</div></div>
     </div>
   </div>
 </section>
@@ -582,10 +841,10 @@ const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
     <div class="s-eye">How It Works</div>
     <h2 class="s-title">From your studio<br>to <em>lasting impact</em></h2>
     <div class="how-steps">
-      <div class="how-step reveal"><span class="step-n">01</span><span class="step-icon">01.</span><div class="step-title">Submit Your Artwork</div><div class="step-desc">Fill in the form below. Tell us who you are — student, teacher, or external artist. Upload high-quality images of your original work with medium and dimensions.</div></div>
-      <div class="how-step reveal rd1"><span class="step-n">02</span><span class="step-icon">02.</span><div class="step-title">Verification</div><div class="step-desc">Our team reviews every submission within 48 hours. We verify originality, image quality, and confirm the work meets standards before it goes live.</div></div>
-      <div class="how-step reveal rd2"><span class="step-n">03</span><span class="step-icon">03.</span><div class="step-title">Live Auction</div><div class="step-desc">Approved works go live with a set bidding window. Bidders from around the world can place offers in Indian Rupees, US Dollars, or UAE Dirhams.</div></div>
-      <div class="how-step reveal rd3"><span class="step-n">04</span><span class="step-icon">04.</span><div class="step-title">Certificate &amp; Funds</div><div class="step-desc">Every participating artist receives an official certificate of contribution. 100% of the winning bid transfers to Arpan Trust within 7 working days.</div></div>
+      <div class="how-step reveal tilt-card"><span class="step-n">01</span><span class="step-icon">01.</span><div class="step-title">Submit Your Artwork</div><div class="step-desc">Fill in the form below. Tell us who you are — student, teacher, or external artist. Upload high-quality images of your original work with medium and dimensions.</div></div>
+      <div class="how-step reveal rd1 tilt-card"><span class="step-n">02</span><span class="step-icon">02.</span><div class="step-title">Verification</div><div class="step-desc">Our team reviews every submission within 48 hours. We verify originality, image quality, and confirm the work meets standards before it goes live.</div></div>
+      <div class="how-step reveal rd2 tilt-card"><span class="step-n">03</span><span class="step-icon">03.</span><div class="step-title">Live Auction</div><div class="step-desc">Approved works go live with a set bidding window. Bidders from around the world can place offers in Indian Rupees, US Dollars, or UAE Dirhams.</div></div>
+      <div class="how-step reveal rd3 tilt-card"><span class="step-n">04</span><span class="step-icon">04.</span><div class="step-title">Certificate &amp; Funds</div><div class="step-desc">Every participating artist receives an official certificate of contribution. 100% of the winning bid transfers to Arpan Trust within 7 working days.</div></div>
     </div>
   </div>
 </section>
@@ -608,15 +867,15 @@ const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
         <div class="qual-warn reveal"><p><strong>Open to everyone.</strong> This auction is not limited to art students. Students of any subject, teachers, staff, and external artists from anywhere in the world are welcome. Encourage friends and colleagues to join.</p></div>
       </div>
       <div class="qual-cards reveal rd2">
-        <div class="qual-card">
+        <div class="qual-card tilt-card">
           <div class="qual-card-title">Certificate of Contribution</div>
           <p>Every artist whose work is verified and listed receives an official certificate of contribution from Arpan Trust. This is a meaningful addition to university applications, portfolios, and professional records — proof of real social impact.</p>
         </div>
-        <div class="qual-card">
+        <div class="qual-card tilt-card">
           <div class="qual-card-title">Why participation matters</div>
           <p>Contributing demonstrates social impact, community leadership, and global citizenship — qualities valued by universities worldwide. By participating, you directly fund education and therapy for children with intellectual disabilities.</p>
         </div>
-        <div class="qual-card">
+        <div class="qual-card tilt-card">
           <div class="qual-card-title">Questions?</div>
           <p>Unsure whether your work meets requirements? Reach out before submitting.</p>
           <div class="qc-contact">Contact: <a href="mailto:dsitlani.art@gmail.com">dsitlani.art@gmail.com</a></div>
@@ -717,7 +976,7 @@ const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
           <label for="f_consent">I confirm this is my entirely original work. I hold full rights to it and agree to donate 100% of the auction proceeds to Arpan Trust. I understand my submission must pass quality verification before being listed.</label>
         </div>
 
-        <button class="submit-btn" id="submitBtn" onclick="submitArtwork()">Submit for Review →</button>
+        <button class="submit-btn btn-magnetic" id="submitBtn" onclick="submitArtwork()" data-magnetic>Submit for Review →</button>
         <p class="f-note">Reviewed within 48 hours. Questions? <a href="mailto:dsitlani.art@gmail.com">dsitlani.art@gmail.com</a></p>
         <div class="form-msg msg-ok" id="submitOk"><span style="font-weight:700;color:var(--green);font-size:1rem">✓</span><div><strong style="display:block;margin-bottom:2px">Submission received!</strong>We'll review your artwork within 48 hours and contact you at the email provided. Thank you for supporting Arpan Trust.</div></div>
         <div class="form-msg msg-err" id="submitErr"><span style="font-size:1.3rem">⚠️</span><div id="submitErrMsg">Something went wrong. Please try again or email dsitlani.art@gmail.com directly.</div></div>
@@ -725,7 +984,7 @@ const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
 
       <!-- Sidebar -->
       <div class="sidebar">
-        <div class="s-card">
+        <div class="s-card tilt-card">
           <div class="s-card-title">Submission Checklist</div>
           <ul class="s-list">
             <li>Original artwork only — any theme</li>
@@ -738,7 +997,7 @@ const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
             <li>All submissions verified before listing</li>
           </ul>
         </div>
-        <div class="s-card" style="background:var(--off)">
+        <div class="s-card tilt-card" style="background:var(--off)">
           <div class="s-card-title">Open to everyone</div>
           <ul class="s-list">
             <li>Students at any school worldwide</li>
@@ -770,10 +1029,10 @@ const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
       <div>
         <p class="reveal">You don't need to buy or submit art to make a difference. Direct donations to Arpan Trust are processed transparently, with 98% allocated directly to programme delivery. All donors receive an 80G tax exemption certificate.</p>
         <div class="donate-tiers reveal">
-          <button class="donate-tier active" onclick="selectTier(this,'Sponsor a Therapy Session','500','6')"><div class="dt-top"><span class="dt-name">Sponsor a Therapy Session</span><span class="dt-amt">₹500 / $6</span></div><div class="dt-desc">Funds one hour of speech, occupational, or physiotherapy for a student.</div></button>
-          <button class="donate-tier" onclick="selectTier(this,'Sponsor a Week of Meals','1500','18')"><div class="dt-top"><span class="dt-name">Sponsor a Week of Meals</span><span class="dt-amt">₹1,500 / $18</span></div><div class="dt-desc">Provides nutritious daily meals for one student for a full week.</div></button>
-          <button class="donate-tier" onclick="selectTier(this,'Fund Art Materials','3000','36')"><div class="dt-top"><span class="dt-name">Fund Art Materials</span><span class="dt-amt">₹3,000 / $36</span></div><div class="dt-desc">Supplies a full term of art therapy materials for the whole class.</div></button>
-          <button class="donate-tier" onclick="selectTier(this,'Sponsor a Student (1 Month)','5000','60')"><div class="dt-top"><span class="dt-name">Sponsor a Student — 1 Month</span><span class="dt-amt">₹5,000 / $60</span></div><div class="dt-desc">Covers the monthly programme cost for one student at Arpan Trust.</div></button>
+          <button class="donate-tier tilt-card active" onclick="selectTier(this,'Sponsor a Therapy Session','500','6')" class="donate-tier active tilt-card"><div class="dt-top"><span class="dt-name">Sponsor a Therapy Session</span><span class="dt-amt">₹500 / $6</span></div><div class="dt-desc">Funds one hour of speech, occupational, or physiotherapy for a student.</div></button>
+          <button class="donate-tier tilt-card" onclick="selectTier(this,'Sponsor a Week of Meals','1500','18')"><div class="dt-top"><span class="dt-name">Sponsor a Week of Meals</span><span class="dt-amt">₹1,500 / $18</span></div><div class="dt-desc">Provides nutritious daily meals for one student for a full week.</div></button>
+          <button class="donate-tier tilt-card" onclick="selectTier(this,'Fund Art Materials','3000','36')"><div class="dt-top"><span class="dt-name">Fund Art Materials</span><span class="dt-amt">₹3,000 / $36</span></div><div class="dt-desc">Supplies a full term of art therapy materials for the whole class.</div></button>
+          <button class="donate-tier tilt-card" onclick="selectTier(this,'Sponsor a Student (1 Month)','5000','60')"><div class="dt-top"><span class="dt-name">Sponsor a Student — 1 Month</span><span class="dt-amt">₹5,000 / $60</span></div><div class="dt-desc">Covers the monthly programme cost for one student at Arpan Trust.</div></button>
         </div>
         <div class="donate-form reveal">
           <div class="donate-form-title">Register your donation intent</div>
@@ -983,6 +1242,15 @@ function removeFile(i) {
   renderFileList();
 }
 
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 // ══════════════════════════════════════════
 // SUBMIT ARTWORK
 // ══════════════════════════════════════════
@@ -1007,8 +1275,17 @@ async function submitArtwork() {
   if (!name || !email || !title || !medium || !dims || !bid || !desc) {
     alert('Please fill in all required fields marked with *'); return;
   }
+  if (parseInt(bid) < 500) {
+    alert('Starting bid must be at least ₹500.'); return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+    alert('Please enter a valid email address.'); return;
+  }
   if (name.trim().split(/\s+/).length < 2) {
     alert('Please enter your full name (first and last name).'); return;
+  }
+  if (!selectedFiles.length) {
+    alert('Please upload at least one photograph of your artwork.'); return;
   }
 
   // Type-specific
@@ -1031,45 +1308,70 @@ async function submitArtwork() {
   }
 
   btn.disabled = true;
-  btn.textContent = 'Submitting…';
-
-  const data = {
-    type: 'submission',
-    artistType: currentType,
-    fullName: name,
-    email: email,
-    institution: institution,
-    cityCountry: cityCountry,
-    roleYear: roleYear,
-    guardianConsent: guardianConsent,
-    artworkTitle: title,
-    medium: medium,
-    dimensions: dims,
-    startingBid: bid,
-    description: desc,
-    notes: document.getElementById('f_notes').value.trim(),
-    imageUrls: selectedFiles.map(f => f.name).join(', ') + ' (uploaded via form)'
-  };
+  btn.textContent = 'Uploading images…';
 
   try {
-    if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
-      // Demo mode — simulate success
-      await new Promise(r => setTimeout(r, 1200));
-      okMsg.classList.add('show');
-      okMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    } else {
-      const res = await fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify(data)
-      });
-      const json = await res.json();
-      if (json.success) {
-        okMsg.classList.add('show');
-        okMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      } else {
-        throw new Error(json.error || 'Unknown error');
+    // Step 1: Upload images to Google Drive
+    let driveFolderUrl = '';
+    let imageLinks = '';
+
+    if (SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL_HERE' && selectedFiles.length) {
+      const uploadedLinks = [];
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
+        btn.textContent = `Uploading image ${i+1} of ${selectedFiles.length}…`;
+        const base64 = await fileToBase64(file);
+        const imgData = {
+          type: 'image',
+          imageBase64: base64,
+          mimeType: file.type,
+          fileName: file.name,
+          artworkTitle: title,
+          artistName: name
+        };
+        const res = await fetch(SCRIPT_URL, { method: 'POST', mode: 'cors', body: JSON.stringify(imgData) });
+        const json = await res.json();
+        if (json.success) {
+          uploadedLinks.push(json.viewUrl);
+          if (json.folderUrl) driveFolderUrl = json.folderUrl;
+        }
       }
+      imageLinks = uploadedLinks.join('\n');
     }
+
+    btn.textContent = 'Submitting…';
+
+    // Step 2: Submit form data
+    const data = {
+      type: 'submission',
+      artistType: currentType,
+      fullName: name,
+      email: email,
+      institution: institution,
+      cityCountry: cityCountry,
+      roleYear: roleYear,
+      guardianConsent: guardianConsent,
+      artworkTitle: title,
+      medium: medium,
+      dimensions: dims,
+      startingBid: bid,
+      description: desc,
+      notes: document.getElementById('f_notes').value.trim(),
+      driveFolderUrl: driveFolderUrl,
+      imageLinks: imageLinks || selectedFiles.map(f => f.name).join(', ')
+    };
+
+    if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+      await new Promise(r => setTimeout(r, 1200));
+    } else {
+      const res = await fetch(SCRIPT_URL, { method: 'POST', mode: 'cors', body: JSON.stringify(data) });
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error || 'Unknown error');
+    }
+
+    okMsg.classList.add('show');
+    okMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
   } catch(e) {
     document.getElementById('submitErrMsg').textContent = 'Submission failed: ' + e.message + '. Please email dsitlani.art@gmail.com directly.';
     errMsg.classList.add('show');
@@ -1077,6 +1379,8 @@ async function submitArtwork() {
 
   btn.disabled = false;
   btn.textContent = 'Submit for Review →';
+  selectedFiles = [];
+  renderFileList();
 }
 
 // ══════════════════════════════════════════
@@ -1116,6 +1420,7 @@ async function submitDonation() {
   const email = document.getElementById('d_email').value.trim();
   const inr = document.getElementById('d_inr').value;
   if (!name || !email || !inr) { alert('Please fill in your name, email and donation amount.'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { alert('Please enter a valid email address.'); return; }
   if (name.trim().split(/\s+/).length < 2) { alert('Please enter your full name (first and last name).'); return; }
 
   const data = {
@@ -1134,10 +1439,10 @@ async function submitDonation() {
       await new Promise(r => setTimeout(r, 800));
       okMsg.classList.add('show');
     } else {
-      const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
+      const res = await fetch(SCRIPT_URL, { method: 'POST', mode: 'cors', body: JSON.stringify(data) });
       const json = await res.json();
       if (json.success) okMsg.classList.add('show');
-      else throw new Error(json.error);
+      else throw new Error(json.error || 'Script error');
     }
   } catch(e) { errMsg.classList.add('show'); }
 }
@@ -1164,15 +1469,26 @@ function openBid(title, artist, currentINR, row) {
   document.getElementById('bidOverlay').classList.add('open');
 }
 function syncBid(from) {
+  let inrVal = 0;
   if (from === 'inr') {
-    const v = parseFloat(document.getElementById('m_inr').value) || 0;
-    document.getElementById('m_usd').value = v ? +(v / USD_RATE).toFixed(0) : '';
-    document.getElementById('m_bidDisplay').textContent = v ? '₹' + v.toLocaleString() + ' / $' + +(v / USD_RATE).toFixed(0) : '—';
-  } else {
+    inrVal = parseFloat(document.getElementById('m_inr').value) || 0;
+    document.getElementById('m_usd').value = inrVal ? +(inrVal / USD_RATE).toFixed(0) : '';
+    document.getElementById('m_aed').value = inrVal ? +(inrVal / AED_RATE).toFixed(0) : '';
+  } else if (from === 'usd') {
     const v = parseFloat(document.getElementById('m_usd').value) || 0;
-    document.getElementById('m_inr').value = v ? +(v * USD_RATE).toFixed(0) : '';
-    document.getElementById('m_bidDisplay').textContent = v ? '₹' + (v * USD_RATE).toLocaleString() + ' / $' + v : '—';
+    inrVal = Math.round(v * USD_RATE);
+    document.getElementById('m_inr').value = inrVal || '';
+    document.getElementById('m_aed').value = inrVal ? +(inrVal / AED_RATE).toFixed(0) : '';
+  } else if (from === 'aed') {
+    const v = parseFloat(document.getElementById('m_aed').value) || 0;
+    inrVal = Math.round(v * AED_RATE);
+    document.getElementById('m_inr').value = inrVal || '';
+    document.getElementById('m_usd').value = inrVal ? +(inrVal / USD_RATE).toFixed(0) : '';
   }
+  const display = parseFloat(document.getElementById('m_inr').value) || 0;
+  document.getElementById('m_bidDisplay').textContent = display
+    ? '₹' + display.toLocaleString() + ' / $' + Math.round(display/USD_RATE) + ' / AED ' + Math.round(display/AED_RATE)
+    : '—';
 }
 async function confirmBid() {
   const inr = parseFloat(document.getElementById('m_inr').value) || 0;
@@ -1186,8 +1502,10 @@ async function confirmBid() {
     errMsg.classList.add('show'); return;
   }
   if (!name || !email) { alert('Please enter your name and email.'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { alert('Please enter a valid email address.'); return; }
   if (name.trim().split(/\s+/).length < 2) { alert('Please enter your full name (first and last name).'); return; }
 
+  const bidAED = Math.round(inr / AED_RATE);
   const data = {
     type: 'bid',
     artworkTitle: bidState.title,
@@ -1195,6 +1513,7 @@ async function confirmBid() {
     bidderEmail: email,
     bidINR: inr,
     bidUSD: Math.round(inr / USD_RATE),
+    bidAED: bidAED,
     submissionRow: bidState.row
   };
 
@@ -1203,10 +1522,10 @@ async function confirmBid() {
       await new Promise(r => setTimeout(r, 700));
       document.getElementById('bidOk').classList.add('show');
     } else {
-      const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
+      const res = await fetch(SCRIPT_URL, { method: 'POST', mode: 'cors', body: JSON.stringify(data) });
       const json = await res.json();
       if (json.success) document.getElementById('bidOk').classList.add('show');
-      else throw new Error(json.error);
+      else throw new Error(json.error || 'Script error');
     }
   } catch(e) {
     document.getElementById('bidErrMsg').textContent = 'Bid failed: ' + e.message;
@@ -1258,14 +1577,22 @@ function renderAuctions(artworks) {
     const timeLeft = end && end > now ? getTimeLeft(end) : (isClosed ? 'Ended' : 'Opening Soon');
     const currentBid = parseFloat(art.currentBid) || parseFloat(art.startingBid) || 0;
     const startBid = parseFloat(art.startingBid) || 0;
-    const artistLabel = art.artistType.charAt(0).toUpperCase() + art.artistType.slice(1) + ' Artist';
+    const artistLabel = art.artistType ? (art.artistType.charAt(0).toUpperCase() + art.artistType.slice(1) + ' Artist') : 'Artist';
 
     // Auction card
+    // Get first image thumbnail if available
+    let thumbHtml = '<span style="font-size:0.68rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)">Artwork Preview</span>';
+    if (art.imageLinks) {
+      const firstLink = art.imageLinks.split('\n')[0].trim();
+      const fid = firstLink.match(/\/d\/([^\/]+)\//)?.[1];
+      if (fid) thumbHtml = `<img src="https://drive.google.com/thumbnail?id=${fid}&sz=w600" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" onerror="this.style.display='none'">`;
+    }
+
     const card = document.createElement('div');
-    card.className = 'auction-card';
+    card.className = 'auction-card tilt-card';
     card.innerHTML = `
       <div class="ac-img">
-        <span style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)">Artwork Preview</span>
+        ${thumbHtml}
         <span class="ac-status ${statusClass}">${isClosed ? '' : '● '}${statusLabel}</span>
         <span class="ac-atype">${artistLabel}</span>
       </div>
@@ -1292,8 +1619,14 @@ function renderAuctions(artworks) {
       const ha = document.createElement('div');
       ha.className = 'hero-artwork';
       ha.onclick = () => openBid(art.artworkTitle, art.fullName || 'Artist', currentBid, art.row);
+      let haThumbContent = '<span style="font-size:0.55rem;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase">Preview</span>';
+      if (art.imageLinks) {
+        const fl = art.imageLinks.split('\n')[0].trim();
+        const hfid = fl.match(/\/d\/([^\/]+)\//)?.[1];
+        if (hfid) haThumbContent = `<img src="https://drive.google.com/thumbnail?id=${hfid}&sz=w120" style="width:100%;height:100%;object-fit:cover" onerror="this.outerHTML='<span style=font-size:0.55rem;color:var(--muted)>IMG</span>'">`;
+      }
       ha.innerHTML = `
-        <div class="ha-thumb"><span style="font-size:0.6rem;color:var(--muted);letter-spacing:0.08em">IMG</span></div>
+        <div class="ha-thumb">${haThumbContent}</div>
         <div class="ha-info">
           <div class="ha-type">${artistLabel}</div>
           <div class="ha-title">${art.artworkTitle}</div>
@@ -1406,30 +1739,56 @@ function renderAdminData() {
   document.getElementById('stat-donations').textContent = d.donations.length;
 
   // Submissions table
-  const subCols = ['Timestamp','Status','Type','Name','Email','Institution','Title','Medium','Dims','Starting ₹','Current ₹','Bids','Auction End','Actions'];
-  renderTable('subTable', subCols, d.submissions.map(s => [
-    s.timestamp, statusPill(s.status), s.artistType, s.fullName, s.email,
-    s.institution || s.cityCountry, s.artworkTitle, s.medium, s.dimensions,
-    '₹' + (s.startingBid || '—'), '₹' + (s.currentBid || '—'), s.bidCount || 0,
-    s.auctionEnd ? `<input type="datetime-local" class="timer-input" value="${toDatetimeLocal(s.auctionEnd)}" onchange="setTimer(${s.row},this.value)">` : `<input type="datetime-local" class="timer-input" onchange="setTimer(${s.row},this.value)">`,
-    `<button class="admin-action-btn approve" onclick="updateStatus(${s.row},'Approved')">Approve</button><button class="admin-action-btn live" onclick="updateStatus(${s.row},'Live')">Go Live</button><button class="admin-action-btn reject" onclick="updateStatus(${s.row},'Rejected')">Reject</button><button class="admin-action-btn close" onclick="updateStatus(${s.row},'Closed')">Close</button>`
-  ]));
+  const subCols = ['Timestamp','Status','Type','Name','Email','Institution','Title','Medium','Dims','Starting ₹','Current ₹','Bids','Images','Auction End','Actions'];
+  renderTable('subTable', subCols, d.submissions.map(s => {
+    const imageCell = buildImageCell(s.driveFolderUrl, s.imageLinks);
+    return [
+      s.timestamp, statusPill(s.status), s.artistType, s.fullName, s.email,
+      s.institution || s.cityCountry, s.artworkTitle, s.medium, s.dimensions,
+      '₹' + (s.startingBid || '—'), '₹' + (s.currentBid || '—'), s.bidCount || 0,
+      imageCell,
+      s.auctionEnd ? `<input type="datetime-local" class="timer-input" value="${toDatetimeLocal(s.auctionEnd)}" onchange="setTimer(${s.row},this.value)">` : `<input type="datetime-local" class="timer-input" onchange="setTimer(${s.row},this.value)">`,
+      `<button class="admin-action-btn approve" onclick="updateStatus(${s.row},'Approved')">Approve</button><button class="admin-action-btn live" onclick="updateStatus(${s.row},'Live')">Go Live</button><button class="admin-action-btn reject" onclick="updateStatus(${s.row},'Rejected')">Reject</button><button class="admin-action-btn close" onclick="updateStatus(${s.row},'Closed')">Close</button>`
+    ];
+  }));
 
   // Recent (overview)
-  renderTable('recentTable', ['Timestamp','Status','Name','Type','Title','Medium','Starting ₹','Actions'],
+  renderTable('recentTable', ['Timestamp','Status','Name','Type','Title','Medium','Starting ₹','Images','Actions'],
     d.submissions.slice(-10).reverse().map(s => [
       s.timestamp, statusPill(s.status), s.fullName, s.artistType, s.artworkTitle, s.medium,
       '₹' + (s.startingBid || '—'),
+      buildImageCell(s.driveFolderUrl, s.imageLinks),
       `<button class="admin-action-btn approve" onclick="updateStatus(${s.row},'Approved');showAdminTab('submissions')">Approve</button><button class="admin-action-btn live" onclick="updateStatus(${s.row},'Live');showAdminTab('submissions')">Live</button><button class="admin-action-btn reject" onclick="updateStatus(${s.row},'Rejected');showAdminTab('submissions')">Reject</button>`
     ]));
 
   // Bids
-  renderTable('bidTable', ['Timestamp','Artwork','Bidder','Email','Bid ₹','Bid $'],
-    d.bids.map(b => [b.timestamp, b.artworkTitle, b.bidderName, b.bidderEmail, '₹' + b.bidINR, '$' + b.bidUSD]));
+  renderTable('bidTable', ['Timestamp','Artwork','Bidder','Email','Bid ₹','Bid $','Bid AED'],
+    d.bids.map(b => [b.timestamp, b.artworkTitle, b.bidderName, b.bidderEmail, '₹' + b.bidINR, '$' + b.bidUSD, 'AED ' + (b.bidAED || Math.round(b.bidINR / AED_RATE))]));
 
   // Donations
   renderTable('donTable', ['Timestamp','Name','Email','Amount ₹','Amount $','Tier','Message'],
     d.donations.map(d => [d.timestamp, d.donorName, d.donorEmail, '₹' + d.amountINR, '$' + d.amountUSD, d.tier, d.message || '—']));
+}
+
+function buildImageCell(folderUrl, imageLinks) {
+  if (!folderUrl && !imageLinks) return '<span style="color:rgba(255,255,255,0.2);font-size:0.72rem">No images</span>';
+  let html = '';
+  // Show thumbnails from individual image links
+  if (imageLinks) {
+    const links = imageLinks.split('\n').filter(l => l.trim());
+    links.slice(0, 3).forEach((link, i) => {
+      const fileId = link.match(/\/d\/([^\/]+)\//)?.[1];
+      if (fileId) {
+        html += `<a href="${link}" target="_blank" style="display:inline-block;margin-right:4px;margin-bottom:4px"><img src="https://drive.google.com/thumbnail?id=${fileId}&sz=w80" style="width:52px;height:52px;object-fit:cover;border:1px solid rgba(255,255,255,0.1);vertical-align:top" onerror="this.style.display='none'"></a>`;
+      }
+    });
+    if (links.length > 3) html += `<span style="font-size:0.65rem;color:rgba(255,255,255,0.3)">+${links.length-3} more</span>`;
+  }
+  // Folder link
+  if (folderUrl) {
+    html += `<br><a href="${folderUrl}" target="_blank" style="font-size:0.65rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em">View all in Drive →</a>`;
+  }
+  return html || '<span style="color:rgba(255,255,255,0.2);font-size:0.72rem">Processing…</span>';
 }
 
 function renderTable(id, cols, rows) {
@@ -1461,7 +1820,16 @@ async function updateStatus(row, status) {
 async function setTimer(row, endDate) {
   if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') { alert('Connect Apps Script first.'); return; }
   try {
-    await fetch(`${SCRIPT_URL}?action=updateTimer&password=${ADMIN_PASS_KEY}&row=${row}&endDate=${encodeURIComponent(endDate)}`);
+    const res = await fetch(`${SCRIPT_URL}?action=updateTimer&password=${ADMIN_PASS_KEY}&row=${row}&endDate=${encodeURIComponent(endDate)}`);
+    const json = await res.json();
+    if (json.success) {
+      // Brief visual confirmation on the input
+      const inputs = document.querySelectorAll('.timer-input');
+      inputs.forEach(inp => { if (inp.onchange && inp.onchange.toString().includes(row)) inp.style.borderColor = '#4ade80'; });
+      setTimeout(() => inputs.forEach(inp => inp.style.borderColor = ''), 2000);
+    } else {
+      alert('Timer update failed: ' + (json.error || 'Unknown error'));
+    }
   } catch(e) { alert('Failed to set timer: ' + e.message); }
 }
 
@@ -1473,17 +1841,201 @@ function showAdminTab(name) {
 }
 
 // ══════════════════════════════════════════
-// SCROLL REVEAL
-// ══════════════════════════════════════════
-const revealObserver = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revealObserver.unobserve(e.target); } });
-}, { threshold: 0.08 });
-document.querySelectorAll('.reveal').forEach(r => revealObserver.observe(r));
-
-// ══════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════
 loadAuctions();
+
+// ══════════════════════════════════════════
+// 3D INTERACTION SYSTEM
+// ══════════════════════════════════════════
+
+// ── MAGNETIC BUTTONS ──
+// Subtle cursor attraction — max 8px movement
+// Easing: cubic-bezier(0.22, 1, 0.36, 1) via CSS transition
+(function initMagnetic() {
+  function applyMagnetic(el) {
+    let bounds, animId;
+
+    el.style.transition = 'transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s cubic-bezier(0.22,1,0.36,1)';
+
+    function onEnter() {
+      bounds = el.getBoundingClientRect();
+    }
+
+    function onMove(e) {
+      if (!bounds) bounds = el.getBoundingClientRect();
+      const cx = bounds.left + bounds.width / 2;
+      const cy = bounds.top + bounds.height / 2;
+      // Distance from centre as fraction of half-size, clamped
+      const dx = (e.clientX - cx) / (bounds.width / 2);
+      const dy = (e.clientY - cy) / (bounds.height / 2);
+      // Max 8px movement — subtle, not distracting
+      const maxMove = 8;
+      const tx = dx * maxMove;
+      const ty = dy * maxMove;
+      cancelAnimationFrame(animId);
+      animId = requestAnimationFrame(() => {
+        el.style.transform = `translate(${tx}px, ${ty}px)`;
+      });
+    }
+
+    function onLeave() {
+      cancelAnimationFrame(animId);
+      // Smooth return to centre
+      el.style.transition = 'transform 0.6s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s ease';
+      el.style.transform = 'translate(0px, 0px)';
+      // Reset to faster transition after return
+      setTimeout(() => {
+        el.style.transition = 'transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s cubic-bezier(0.22,1,0.36,1)';
+      }, 600);
+    }
+
+    el.addEventListener('mouseenter', onEnter);
+    el.addEventListener('mousemove', onMove);
+    el.addEventListener('mouseleave', onLeave);
+  }
+
+  // Apply to all magnetic elements, and re-apply when DOM changes
+  function bindAll() {
+    document.querySelectorAll('[data-magnetic]').forEach(el => {
+      if (!el.dataset.magneticBound) {
+        el.dataset.magneticBound = 'true';
+        applyMagnetic(el);
+      }
+    });
+  }
+
+  // Initial bind
+  bindAll();
+
+  // Re-bind when auction cards load dynamically
+  const magneticObserver = new MutationObserver(bindAll);
+  magneticObserver.observe(document.body, { childList: true, subtree: true });
+})();
+
+// ── 3D CARD TILT ──
+// Gentle perspective tilt following cursor — premium feel
+(function initTilt() {
+  const MAX_TILT = 6; // degrees — conservative, not nauseating
+  const PERSPECTIVE = 1000;
+
+  function applyTilt(el) {
+    let bounds;
+
+    el.addEventListener('mouseenter', () => {
+      bounds = el.getBoundingClientRect();
+      el.style.transition = 'transform 0.1s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s ease';
+    });
+
+    el.addEventListener('mousemove', (e) => {
+      if (!bounds) return;
+      const cx = bounds.left + bounds.width / 2;
+      const cy = bounds.top + bounds.height / 2;
+      const dx = (e.clientX - cx) / (bounds.width / 2);
+      const dy = (e.clientY - cy) / (bounds.height / 2);
+      const rotX = -dy * MAX_TILT;
+      const rotY = dx * MAX_TILT;
+      requestAnimationFrame(() => {
+        el.style.transform = `perspective(${PERSPECTIVE}px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(4px)`;
+      });
+    });
+
+    el.addEventListener('mouseleave', () => {
+      el.style.transition = 'transform 0.5s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s ease';
+      el.style.transform = `perspective(${PERSPECTIVE}px) rotateX(0deg) rotateY(0deg) translateZ(0px)`;
+    });
+  }
+
+  function bindTilt() {
+    document.querySelectorAll('.tilt-card').forEach(el => {
+      if (!el.dataset.tiltBound) {
+        el.dataset.tiltBound = 'true';
+        applyTilt(el);
+      }
+    });
+  }
+
+  bindTilt();
+
+  // Re-bind for dynamically rendered auction cards
+  const tiltObserver = new MutationObserver(bindTilt);
+  tiltObserver.observe(document.body, { childList: true, subtree: true });
+})();
+
+// ── UPGRADED SCROLL REVEAL with sibling stagger ──
+(function initReveal() {
+  const EASE = 'cubic-bezier(0.22,1,0.36,1)';
+  const DURATION = 700;
+  const STAGGER = 100; // ms between siblings
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+
+      const el = entry.target;
+      // Find sibling reveal elements in the same parent for stagger
+      const parent = el.parentElement;
+      const siblings = parent ? Array.from(parent.querySelectorAll(':scope > .reveal, :scope > * > .reveal')) : [];
+      const idx = siblings.indexOf(el);
+      const baseDelay = idx >= 0 ? idx * STAGGER : 0;
+
+      // Only use base delay if element doesn't already have a rd* class
+      const hasExplicitDelay = el.classList.contains('rd1') || el.classList.contains('rd2') || el.classList.contains('rd3');
+      if (!hasExplicitDelay) {
+        el.style.transitionDelay = baseDelay + 'ms';
+      }
+
+      // Trigger animation
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          el.classList.add('in');
+        });
+      });
+
+      observer.unobserve(el);
+    });
+  }, {
+    threshold: 0.08,
+    rootMargin: '0px 0px -32px 0px'
+  });
+
+  // Observe all reveal elements including dynamically added ones
+  function observeAll() {
+    document.querySelectorAll('.reveal:not([data-observed])').forEach(el => {
+      el.dataset.observed = 'true';
+      observer.observe(el);
+    });
+  }
+
+  observeAll();
+
+  const revealMutObserver = new MutationObserver(observeAll);
+  revealMutObserver.observe(document.body, { childList: true, subtree: true });
+})();
+
+// ── AMBIENT PARALLAX on hero orbs ──
+// Very subtle — orbs shift slightly with scroll for depth
+(function initParallax() {
+  const orbs = document.querySelectorAll('.hero-bg-orb');
+  if (!orbs.length) return;
+
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const scrollY = window.scrollY;
+      orbs.forEach((orb, i) => {
+        const speed = [0.08, 0.05, 0.06][i] || 0.05;
+        const offset = scrollY * speed;
+        // Combine with existing animation by using a wrapper translate
+        orb.style.marginTop = offset + 'px';
+      });
+      ticking = false;
+    });
+  }, { passive: true });
+})();
+
 </script>
 </body>
 </html>
