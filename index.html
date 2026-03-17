@@ -679,7 +679,7 @@ footer::before {
 
 <!-- CONFIG — paste your Apps Script URL here after deploying -->
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbygG1E9uJg10_X60zUJyyUDWMVryBSJd6jA2Cb2c-e43bwpsMBl1yOvQNa_voT27f28MA/exec';
+const SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
 const USD_RATE = 83;      // 1 USD = approx 83 INR
 const AED_RATE = 22.7;    // 1 AED = approx 22.7 INR
 const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
@@ -860,7 +860,7 @@ const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
           <div class="req-item"><span class="req-icon">—</span><div><div class="req-title">Original Artwork Only</div><div class="req-desc">Must be entirely your own original work. No reproductions or AI-generated pieces. Any theme is welcome.</div></div></div>
           <div class="req-item"><span class="req-icon">—</span><div><div class="req-title">Medium Must Be Stated</div><div class="req-desc">Clearly specify the medium — oil, acrylic, watercolour, ink, mixed media, digital, sculpture, etc. Mandatory for all.</div></div></div>
           <div class="req-item"><span class="req-icon">—</span><div><div class="req-title">Dimensions &amp; Starting Bid</div><div class="req-desc">Provide physical dimensions and suggest a starting bid in INR. Required for all submissions.</div></div></div>
-          <div class="req-item"><span class="req-icon">—</span><div><div class="req-title">High-Quality Photography</div><div class="req-desc">The artwork and photograph must both be high quality. Even lighting, neutral background, minimum 2000px. Blurry or dark images will be rejected.</div></div></div>
+          <div class="req-item"><span class="req-icon">—</span><div><div class="req-title">Google Drive Link Required</div><div class="req-desc">Upload your photos to a Google Drive folder, set it to "Anyone with the link can view", and paste the link in the form. The artwork and photo must both be high quality — even lighting, neutral background, minimum 2000px.</div></div></div>
           <div class="req-item"><span class="req-icon">—</span><div><div class="req-title">Verification Before Listing</div><div class="req-desc">All submissions are reviewed before going live. Our team may request additional photos or information.</div></div></div>
           <div class="req-item"><span class="req-icon">—</span><div><div class="req-title">Teachers: School &amp; Location Required</div><div class="req-desc">If submitting as a teacher, your school name and city/country are mandatory fields.</div></div></div>
         </div>
@@ -944,7 +944,7 @@ const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
 
         <hr class="f-div">
 
-        <div class="q-notice"><span style="font-weight:600;flex-shrink:0;color:var(--gold)">Note:</span><p><strong>Quality reminder:</strong> Both the artwork and photograph must be of high quality. Even lighting, neutral background, minimum 2000px wide. Blurry or poorly-lit images will not be approved. Medium and dimensions are mandatory.</p></div>
+        <div class="q-notice"><span style="font-weight:600;flex-shrink:0;color:var(--gold)">Note:</span><p><strong>Quality reminder:</strong> Both the artwork and photograph must be of high quality. Even lighting, neutral background, minimum 2000px wide. Blurry or poorly-lit images will not be approved. Your Google Drive folder must be set to "Anyone with the link can view" — we cannot review private links. Medium and dimensions are mandatory.</p></div>
 
         <div class="f-row">
           <div class="f-group"><label class="f-label">Full Name (first &amp; last) <span class="f-req">*</span></label><input id="f_name" type="text" placeholder="First and last name"></div>
@@ -962,12 +962,14 @@ const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
           <div class="f-group full"><label class="f-label">Artwork Description <span class="f-req">*</span></label><textarea id="f_desc" placeholder="Describe the work — its story, inspiration, technique, and any personal meaning."></textarea></div>
         </div>
 
-        <div class="upload-zone" id="uploadZone">
-          <input type="file" id="f_images" accept="image/*" multiple onchange="handleFiles(this.files)">
-          <span class="uz-icon" style="font-size:1.6rem;font-family:monospace;color:var(--muted)">[ img ]</span>
-          <div class="uz-text"><strong>Click to upload artwork photographs</strong><br>JPEG or PNG · Min 2000px wide · Max 10MB per file · Up to 5 images<br>Must include a clear, well-lit front-facing photo.</div>
+        <div style="margin-bottom:16px">
+          <label class="f-label">Google Drive Link to Artwork Images <span class="f-req">*</span></label>
+          <input type="url" id="f_drivelink" placeholder="https://drive.google.com/drive/folders/..." style="border:1px solid var(--border);background:white;color:var(--ink);padding:9px 13px;font-family:'Outfit',sans-serif;font-size:0.86rem;outline:none;transition:border-color .2s;width:100%;border-radius:0" oninput="validateDriveLink(this)">
+          <div id="driveLinkMsg" style="font-size:0.72rem;margin-top:6px;display:none"></div>
         </div>
-        <div id="fileList"></div>
+        <div style="background:rgba(184,146,42,0.07);border:1px solid rgba(184,146,42,0.2);padding:12px 16px;margin-bottom:16px;font-size:0.76rem;color:#5c4a15;line-height:1.6">
+          <strong>How to create your Drive link:</strong> Upload your artwork photos to Google Drive → right-click the folder → Share → change to "Anyone with the link" → copy the link and paste it above. Include at least one high-quality, well-lit photo. Min 2000px wide.
+        </div>
 
         <div class="f-group full" style="margin-bottom:16px"><label class="f-label">Additional Notes (optional)</label><textarea id="f_notes" style="min-height:60px" placeholder="Any notes on provenance, framing, shipping, or messages for our team…"></textarea></div>
 
@@ -991,7 +993,7 @@ const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
             <li>Medium clearly stated (mandatory)</li>
             <li>Physical dimensions provided</li>
             <li>Starting bid suggested in ₹</li>
-            <li>High-quality, well-lit photograph(s)</li>
+            <li>Google Drive folder link (set to "Anyone with link")</li><li>High-quality, well-lit photograph(s) in that folder</li>
             <li>Teachers: school name + location required</li>
             <li>Guardian consent if under 18</li>
             <li>All submissions verified before listing</li>
@@ -1218,37 +1220,21 @@ function setType(t) {
 }
 
 // ══════════════════════════════════════════
-// FILE UPLOAD
+// DRIVE LINK VALIDATION
 // ══════════════════════════════════════════
-let selectedFiles = [];
-function handleFiles(files) {
-  const list = Array.from(files);
-  list.forEach(f => {
-    if (selectedFiles.length < 5 && !selectedFiles.find(x => x.name === f.name)) {
-      selectedFiles.push(f);
-    }
-  });
-  renderFileList();
-}
-function renderFileList() {
-  const el = document.getElementById('fileList');
-  if (!selectedFiles.length) { el.innerHTML = ''; return; }
-  el.innerHTML = selectedFiles.map((f, i) =>
-    `<div class="file-item"><span style='font-size:0.7rem;color:var(--muted);font-family:monospace'>[img]</span><span style="flex:1;font-size:0.74rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.name}</span><span style="font-size:0.7rem;color:var(--muted);margin-left:8px">${(f.size/1024/1024).toFixed(1)}MB</span><button class="file-rm" onclick="removeFile(${i})">✕</button></div>`
-  ).join('');
-}
-function removeFile(i) {
-  selectedFiles.splice(i, 1);
-  renderFileList();
-}
-
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result.split(',')[1]);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
+function validateDriveLink(input) {
+  const val = input.value.trim();
+  const msg = document.getElementById('driveLinkMsg');
+  if (!val) { msg.style.display = 'none'; return; }
+  const isDrive = val.includes('drive.google.com');
+  msg.style.display = 'block';
+  if (isDrive) {
+    msg.style.color = 'var(--green)';
+    msg.textContent = 'Valid Google Drive link detected. Make sure it is set to "Anyone with the link can view".';
+  } else {
+    msg.style.color = 'var(--red)';
+    msg.textContent = 'This does not look like a Google Drive link. Please paste a link from drive.google.com.';
+  }
 }
 
 // ══════════════════════════════════════════
@@ -1284,8 +1270,12 @@ async function submitArtwork() {
   if (name.trim().split(/\s+/).length < 2) {
     alert('Please enter your full name (first and last name).'); return;
   }
-  if (!selectedFiles.length) {
-    alert('Please upload at least one photograph of your artwork.'); return;
+  const driveLink = document.getElementById('f_drivelink').value.trim();
+  if (!driveLink) {
+    alert('Please provide a Google Drive link to your artwork photographs.'); return;
+  }
+  if (!driveLink.includes('drive.google.com')) {
+    alert('Please provide a valid Google Drive link (must contain drive.google.com).'); return;
   }
 
   // Type-specific
@@ -1308,55 +1298,10 @@ async function submitArtwork() {
   }
 
   btn.disabled = true;
-  btn.textContent = 'Uploading images…';
+  btn.textContent = 'Submitting…';
 
   try {
-    // Step 1: Upload images to Google Drive
-    let driveFolderUrl = '';
-    let imageLinks = '';
-
-    if (SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL_HERE' && selectedFiles.length) {
-      const uploadedLinks = [];
-      for (let i = 0; i < selectedFiles.length; i++) {
-        const file = selectedFiles[i];
-        btn.textContent = `Uploading image ${i+1} of ${selectedFiles.length}…`;
-
-        // Check file size — Apps Script has a 50MB POST limit, warn at 8MB
-        if (file.size > 8 * 1024 * 1024) {
-          throw new Error(`Image "${file.name}" is too large (${(file.size/1024/1024).toFixed(1)}MB). Please resize it to under 8MB and try again.`);
-        }
-
-        const base64 = await fileToBase64(file);
-        const imgData = {
-          type: 'image',
-          imageBase64: base64,
-          mimeType: file.type,
-          fileName: file.name,
-          artworkTitle: title,
-          artistName: name
-        };
-
-        let imgRes, imgJson;
-        try {
-          imgRes = await fetch(SCRIPT_URL, { method: 'POST', mode: 'cors', body: JSON.stringify(imgData) });
-          imgJson = await imgRes.json();
-        } catch(fetchErr) {
-          throw new Error(`Image upload failed for "${file.name}": ${fetchErr.message}. Check your internet connection and try again.`);
-        }
-
-        if (imgJson.success) {
-          uploadedLinks.push(imgJson.viewUrl);
-          if (imgJson.folderUrl) driveFolderUrl = imgJson.folderUrl;
-        } else {
-          throw new Error(`Drive upload failed for "${file.name}": ${imgJson.error || 'Unknown error'}. Please try again or contact dsitlani.art@gmail.com`);
-        }
-      }
-      imageLinks = uploadedLinks.join('\n');
-    }
-
-    btn.textContent = 'Submitting…';
-
-    // Step 2: Submit form data
+    // Submit form data with Drive link
     const data = {
       type: 'submission',
       artistType: currentType,
@@ -1372,8 +1317,8 @@ async function submitArtwork() {
       startingBid: bid,
       description: desc,
       notes: document.getElementById('f_notes').value.trim(),
-      driveFolderUrl: driveFolderUrl,
-      imageLinks: imageLinks
+      driveFolderUrl: driveLink,
+      imageLinks: driveLink
     };
 
     if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
@@ -1394,8 +1339,6 @@ async function submitArtwork() {
 
   btn.disabled = false;
   btn.textContent = 'Submit for Review →';
-  selectedFiles = [];
-  renderFileList();
 }
 
 // ══════════════════════════════════════════
@@ -1595,13 +1538,8 @@ function renderAuctions(artworks) {
     const artistLabel = art.artistType ? (art.artistType.charAt(0).toUpperCase() + art.artistType.slice(1) + ' Artist') : 'Artist';
 
     // Auction card
-    // Get first image thumbnail if available
-    let thumbHtml = '<span style="font-size:0.68rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)">Artwork Preview</span>';
-    if (art.imageLinks) {
-      const firstLink = art.imageLinks.split('\n')[0].trim();
-      const fid = firstLink.match(/\/d\/([^\/]+)\//)?.[1];
-      if (fid) thumbHtml = `<img src="https://drive.google.com/thumbnail?id=${fid}&sz=w600" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" onerror="this.style.display='none'">`;
-    }
+    // Show Drive link as thumbnail area — thumbnails require auth so we keep it clean
+    let thumbHtml = '<span style="font-size:0.68rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)">Artwork</span>';
 
     const card = document.createElement('div');
     card.className = 'auction-card tilt-card';
@@ -1634,14 +1572,8 @@ function renderAuctions(artworks) {
       const ha = document.createElement('div');
       ha.className = 'hero-artwork';
       ha.onclick = () => openBid(art.artworkTitle, art.fullName || 'Artist', currentBid, art.row);
-      let haThumbContent = '<span style="font-size:0.55rem;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase">Preview</span>';
-      if (art.imageLinks) {
-        const fl = art.imageLinks.split('\n')[0].trim();
-        const hfid = fl.match(/\/d\/([^\/]+)\//)?.[1];
-        if (hfid) haThumbContent = `<img src="https://drive.google.com/thumbnail?id=${hfid}&sz=w120" style="width:100%;height:100%;object-fit:cover" onerror="this.outerHTML='<span style=font-size:0.55rem;color:var(--muted)>IMG</span>'">`;
-      }
       ha.innerHTML = `
-        <div class="ha-thumb">${haThumbContent}</div>
+        <div class="ha-thumb"><span style="font-size:0.55rem;color:var(--muted);letter-spacing:0.05em;text-transform:uppercase">Art</span></div>
         <div class="ha-info">
           <div class="ha-type">${artistLabel}</div>
           <div class="ha-title">${art.artworkTitle}</div>
@@ -1786,24 +1718,11 @@ function renderAdminData() {
 }
 
 function buildImageCell(folderUrl, imageLinks) {
-  if (!folderUrl && !imageLinks) return '<span style="color:rgba(255,255,255,0.2);font-size:0.72rem">No images</span>';
-  let html = '';
-  // Show thumbnails from individual image links
-  if (imageLinks) {
-    const links = imageLinks.split('\n').filter(l => l.trim());
-    links.slice(0, 3).forEach((link, i) => {
-      const fileId = link.match(/\/d\/([^\/]+)\//)?.[1];
-      if (fileId) {
-        html += `<a href="${link}" target="_blank" style="display:inline-block;margin-right:4px;margin-bottom:4px"><img src="https://drive.google.com/thumbnail?id=${fileId}&sz=w80" style="width:52px;height:52px;object-fit:cover;border:1px solid rgba(255,255,255,0.1);vertical-align:top" onerror="this.style.display='none'"></a>`;
-      }
-    });
-    if (links.length > 3) html += `<span style="font-size:0.65rem;color:rgba(255,255,255,0.3)">+${links.length-3} more</span>`;
+  const link = folderUrl || imageLinks;
+  if (!link || !link.includes('drive.google.com')) {
+    return '<span style="color:rgba(255,255,255,0.2);font-size:0.72rem">No images</span>';
   }
-  // Folder link
-  if (folderUrl) {
-    html += `<br><a href="${folderUrl}" target="_blank" style="font-size:0.65rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em">View all in Drive →</a>`;
-  }
-  return html || '<span style="color:rgba(255,255,255,0.2);font-size:0.72rem">Processing…</span>';
+  return `<a href="${link}" target="_blank" style="font-size:0.68rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;white-space:nowrap">View in Drive →</a>`;
 }
 
 function renderTable(id, cols, rows) {
