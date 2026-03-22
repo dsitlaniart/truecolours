@@ -673,6 +673,50 @@ footer::before {
   .admin-tabs{display:none}
   .founder-bar-inner{padding:0 24px}
 }
+
+/* === NEURODIVERGENT ARTISTS SECTION === */
+#artists{background:var(--off);padding:80px 0}
+.artists-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:48px;gap:24px;flex-wrap:wrap}
+.artists-hdr-right{max-width:420px;font-size:0.82rem;color:var(--muted);line-height:1.7}
+.artists-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:28px;margin-bottom:56px}
+.artist-card{background:white;border:1px solid var(--border);overflow:hidden;transition:box-shadow 0.35s cubic-bezier(0.22,1,0.36,1),transform 0.35s cubic-bezier(0.22,1,0.36,1)}
+.artist-card:hover{box-shadow:0 16px 48px rgba(0,0,0,0.1);transform:translateY(-3px)}
+.artist-artwork{aspect-ratio:4/3;background:var(--off);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.artist-artwork-placeholder{text-align:center;color:var(--muted);font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;padding:20px}
+.artist-artwork-placeholder span{display:block;font-size:2.5rem;margin-bottom:8px;opacity:0.4}
+.artist-artwork img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.artist-tag{position:absolute;top:10px;left:10px;font-size:0.55rem;letter-spacing:0.14em;text-transform:uppercase;padding:3px 8px;font-weight:600;background:var(--accent);color:white}
+.artist-body{padding:20px}
+.artist-name{font-family:'Libre Baskerville',serif;font-size:1.05rem;margin-bottom:4px;line-height:1.2}
+.artist-condition{font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.artist-bio{font-size:0.76rem;color:var(--muted);line-height:1.6;margin-bottom:14px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.artist-meta{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid var(--border);font-size:0.68rem;color:var(--muted)}
+.artist-location{display:flex;align-items:center;gap:5px}
+.artist-medium{font-weight:500;color:var(--ink)}
+.hero-artists-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hero-artist-card{background:white;border:1px solid var(--border);padding:14px;cursor:pointer;transition:box-shadow .3s}
+.hero-artist-card:hover{box-shadow:0 8px 24px rgba(0,0,0,0.08)}
+.hac-artwork{aspect-ratio:3/2;background:var(--off);margin-bottom:6px;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.hac-artwork img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.hac-name{font-family:'Libre Baskerville',serif;font-size:0.82rem;line-height:1.2}
+.hac-type{font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent)}
+.artist-modal-backdrop{position:fixed;inset:0;background:rgba(15,14,12,0.7);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.artist-modal{background:white;max-width:600px;width:100%;max-height:90vh;overflow-y:auto;padding:40px;position:relative}
+.artist-modal-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--muted)}
+.artist-modal-artwork{aspect-ratio:4/3;background:var(--off);margin-bottom:24px;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.artist-modal-artwork img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.artist-modal-name{font-family:'Libre Baskerville',serif;font-size:1.6rem;margin-bottom:6px}
+.artist-modal-condition{font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+.artist-modal-bio{font-size:0.85rem;color:var(--muted);line-height:1.7;margin-bottom:20px}
+.artist-modal-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px;background:var(--off);margin-bottom:20px;font-size:0.78rem}
+.artist-modal-meta-label{font-size:0.58rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:2px}
+.artist-modal-meta-val{font-weight:500;color:var(--ink)}
+.artists-join{background:white;border:1px solid var(--border);padding:40px;margin-top:40px}
+.artists-join h3{font-family:'Libre Baskerville',serif;font-size:1.3rem;margin-bottom:6px}
+.artists-join-desc{font-size:0.82rem;color:var(--muted);line-height:1.6;margin-bottom:24px}
+.artists-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.artists-empty{text-align:center;padding:64px 20px;color:var(--muted);grid-column:1/-1}
+@media(max-width:900px){.artists-grid{grid-template-columns:1fr}.hero-artists-grid{grid-template-columns:1fr}.artist-modal{padding:24px}.artists-form-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -697,6 +741,7 @@ const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
       <a href="#auctions">Auctions</a>
       <a href="#submit">Submit</a>
       <a href="#donate">Donate</a>
+      <a href="#artists">Artists</a>
       <a href="#" onclick="openAdmin(event)" style="color:var(--muted)">Admin</a>
       <a href="#submit" class="nav-outline btn-magnetic" data-magnetic>Submit Artwork</a>
       <a href="#donate" class="nav-cta btn-magnetic" data-magnetic>Donate</a>
@@ -743,9 +788,11 @@ const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
     </div>
   </div>
   <div class="hero-right">
-    <p class="hero-right-title">Live Auctions</p>
-    <div id="heroAuctions">
-      <div style="text-align:center;padding:40px 0;color:var(--muted);font-size:0.82rem">Loading auctions…</div>
+    <p class="hero-right-title"><a href="#artists" style="color:var(--ink);text-decoration:none">Neurodivergent Artists</a></p>
+    <div id="heroArtists">
+      <div id="heroArtistsGrid" class="hero-artists-grid">
+        <div style="text-align:center;padding:40px 0;color:var(--muted);font-size:0.82rem;grid-column:1/-1">Profiles coming soon.<br>Be the first to share your story.</div>
+      </div>
     </div>
   </div>
 </section>
@@ -834,6 +881,145 @@ const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
     </div>
   </div>
 </section>
+
+
+<!-- NEURODIVERGENT ARTISTS -->
+<section id="artists">
+  <div class="container">
+    <div class="artists-hdr">
+      <div>
+        <div class="s-eye">Neurodivergent Artists</div>
+        <h2 class="s-title" style="margin-bottom:0">Profiles from around <em>the world.</em></h2>
+      </div>
+      <div class="artists-hdr-right">A dedicated space for neurodivergent artists &mdash; those with autism, ADHD, dyslexia, dyspraxia, or other neurological differences &mdash; to share their work and stories with the world.</div>
+    </div>
+    <div id="artistsGrid" class="artists-grid">
+      <div class="artists-empty" id="artistsLoading">
+        <div style="font-size:2rem;opacity:0.3;margin-bottom:12px">&#9678;</div>
+        <div style="font-size:0.9rem;font-weight:500;margin-bottom:6px">Loading artist profiles&hellip;</div>
+      </div>
+    </div>
+    <div id="artistsEmpty" style="display:none;text-align:center;padding:48px 0;color:var(--muted)">
+      <div style="font-size:2rem;opacity:0.3;margin-bottom:12px">&#9678;</div>
+      <div style="font-size:0.9rem;font-weight:500;margin-bottom:6px">No profiles yet &mdash; be the first</div>
+      <div style="font-size:0.8rem">Submit your profile below and let the world see your art.</div>
+    </div>
+    <div class="artists-join">
+      <div style="margin-bottom:28px">
+        <div class="s-eye">Share Your Story</div>
+        <h3>Build your artist profile</h3>
+        <p class="artists-join-desc">Are you a neurodivergent artist? We'd love to feature you here &mdash; tell the world who you are, what you create, and what drives your art. Profiles are reviewed before publishing.</p>
+      </div>
+      <form id="artistProfileForm">
+        <div class="artists-form-grid">
+          <div class="form-group">
+            <label class="form-label">Full Name <span style="color:var(--accent)">*</span></label>
+            <input type="text" class="form-input" name="artistName" placeholder="Your full name" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address <span style="color:var(--accent)">*</span></label>
+            <input type="email" class="form-input" name="artistEmail" placeholder="you@email.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">City &amp; Country <span style="color:var(--accent)">*</span></label>
+            <input type="text" class="form-input" name="artistLocation" placeholder="e.g. London, UK" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Neurodivergent Identity <span style="color:var(--accent)">*</span></label>
+            <select class="form-input" name="artistCondition" required>
+              <option value="">Select</option>
+              <option>Autistic / Autism Spectrum</option>
+              <option>ADHD</option>
+              <option>Dyslexia</option>
+              <option>Dyspraxia / DCD</option>
+              <option>Dyscalculia</option>
+              <option>Tourette Syndrome</option>
+              <option>Synesthesia</option>
+              <option>Multiple / Combined</option>
+              <option>Prefer not to specify</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Primary Art Medium <span style="color:var(--accent)">*</span></label>
+            <select class="form-input" name="artistMedium" required>
+              <option value="">Select medium</option>
+              <option>Oil on Canvas</option>
+              <option>Acrylic on Canvas</option>
+              <option>Watercolour</option>
+              <option>Ink / Pen Drawing</option>
+              <option>Mixed Media</option>
+              <option>Photography</option>
+              <option>Digital Art</option>
+              <option>Sculpture / 3D</option>
+              <option>Textile / Fibre</option>
+              <option>Collage</option>
+              <option>Printmaking</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Years Creating Art</label>
+            <select class="form-input" name="artistYears">
+              <option value="">Select</option>
+              <option>Less than 1 year</option>
+              <option>1&ndash;3 years</option>
+              <option>3&ndash;5 years</option>
+              <option>5&ndash;10 years</option>
+              <option>10+ years</option>
+            </select>
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">About You &amp; Your Art <span style="color:var(--accent)">*</span></label>
+            <textarea class="form-input" name="artistBio" rows="4" placeholder="Tell the world about yourself &mdash; what do you create, what inspires you, and how does being neurodivergent shape your art?" required style="resize:vertical"></textarea>
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">Link to Your Artwork (Google Drive or Portfolio)</label>
+            <input type="url" class="form-input" name="artistPortfolio" placeholder="https://drive.google.com/... or https://your-portfolio.com">
+            <div style="font-size:0.7rem;color:var(--muted);margin-top:5px">Share a Google Drive folder (set to &ldquo;Anyone with the link&rdquo;) with photos of your work, or link your existing portfolio.</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Instagram Handle (optional)</label>
+            <input type="text" class="form-input" name="artistInstagram" placeholder="@yourhandle">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Display Preference</label>
+            <select class="form-input" name="artistCredit">
+              <option value="full">Full name</option>
+              <option value="first">First name only</option>
+              <option value="anon">Anonymous</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:20px;padding:16px;background:var(--off);font-size:0.78rem;color:var(--muted);border-left:3px solid var(--accent)">
+          <strong style="color:var(--ink)">Your privacy matters.</strong> Your profile will be reviewed before publishing. We will never share your email publicly. You may request removal at any time by contacting us.
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:10px;margin-top:20px;font-size:0.78rem;color:var(--muted)">
+          <input type="checkbox" name="artistConsent" required style="margin-top:2px;flex-shrink:0">
+          <span>I consent to my profile and artwork being displayed publicly on True Colours. I understand my submission will be reviewed before going live.</span>
+        </div>
+        <button type="submit" class="btn btn-accent" style="margin-top:20px;padding:12px 28px;cursor:pointer">Submit Profile for Review &rarr;</button>
+        <div id="artistFormSuccess" style="display:none;margin-top:16px;padding:14px;background:#f0fdf4;border:1px solid #22c55e;color:#15803d;font-size:0.82rem">
+          <strong>Profile received!</strong> We'll review your submission and publish it shortly. Thank you for sharing your story.
+        </div>
+        <div id="artistFormError" style="display:none;margin-top:16px;padding:14px;background:#fef2f2;border:1px solid #f87171;color:#b91c1c;font-size:0.82rem">
+          Something went wrong. Please try again or email <a href="mailto:dsitlani.art@gmail.com" style="color:var(--accent)">dsitlani.art@gmail.com</a>.
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ARTIST PROFILE MODAL -->
+<div id="artistModal" class="artist-modal-backdrop" onclick="if(event.target===this)closeArtistModal()">
+  <div class="artist-modal">
+    <button class="artist-modal-close" onclick="closeArtistModal()">&times;</button>
+    <div class="artist-modal-artwork" id="artistModalArtwork">
+      <span style="font-size:2rem;opacity:0.3">&#9678;</span>
+    </div>
+    <div id="artistModalContent"></div>
+  </div>
+</div>
 
 <!-- HOW IT WORKS -->
 <section id="how" class="how">
@@ -1094,7 +1280,7 @@ const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
           <a href="https://www.youtube.com/@arpancharitabletrust4310" class="f-soc" target="_blank">yt</a>
         </div>
       </div>
-      <div class="f-col"><h4>Platform</h4><a href="#auctions">Live Auctions</a><a href="#submit">Submit Artwork</a><a href="#how">How It Works</a><a href="#donate">Donate</a></div>
+      <div class="f-col"><h4>Platform</h4><a href="#auctions">Live Auctions</a><a href="#artists">Neurodivergent Artists</a><a href="#submit">Submit Artwork</a><a href="#how">How It Works</a><a href="#donate">Donate</a></div>
       <div class="f-col"><h4>About</h4><a href="https://www.arpantrust.org" target="_blank">Arpan Trust Website</a><a href="#about">Programmes</a><a href="#csr">CSR &amp; Corporate</a></div>
       <div class="f-col"><h4>Contact</h4><a href="mailto:dsitlani.art@gmail.com">dsitlani.art@gmail.com</a><a href="mailto:arpancharitabletrust1993@gmail.com">arpancharitabletrust1993@gmail.com</a><a href="tel:+916358856758">+91-63588-56758</a></div>
     </div>
@@ -1941,6 +2127,105 @@ loadAuctions();
     });
   }
 
+  
+  // === NEURODIVERGENT ARTISTS ===
+  const DEMO_ARTISTS = [
+    {id:'d1',name:'Amara Osei',condition:'Autistic / Autism Spectrum',medium:'Watercolour',location:'Accra, Ghana',bio:'I find patterns in everything — the way light refracts through water, the geometry of leaves, the rhythm of crowds. Watercolour lets me chase those moments before they disappear. Being autistic means I see the world in fine detail; my art is an attempt to share that view.',years:'5–10 years',portfolio:'',instagram:'',credit:'full'},
+    {id:'d2',name:'Priya Mehta',condition:'ADHD',medium:'Mixed Media',location:'Mumbai, India',bio:'My studio is controlled chaos — dozens of projects at once, each one feeding the others. ADHD means hyperfocus is my superpower: when art calls, nothing else exists. I work with found materials, paint, and text to build layered worlds.',years:'3–5 years',portfolio:'',instagram:'',credit:'full'},
+    {id:'d3',name:'Sam R.',condition:'Dyslexia',medium:'Digital Art',location:'Bristol, UK',bio:'Words never came easily to me, so I learned to speak in images instead. Digital art removes every barrier — no mess, no muscle memory required, just pure creative thought. My work explores identity, language, and what it means to think differently.',years:'1–3 years',portfolio:'',instagram:'',credit:'first'},
+    {id:'d4',name:'Kenji Nakamura',condition:'Synesthesia',medium:'Oil on Canvas',location:'Osaka, Japan',bio:'I hear music in colour. Every sound has a shape, a texture, a hue — and I paint what I hear. Synesthesia used to confuse me; now it is the lens through which I create. My canvases are visual soundscapes, each one a performance captured in oil.',years:'10+ years',portfolio:'',instagram:'',credit:'full'}
+  ];
+
+  let allArtistProfiles = [];
+
+  function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+  async function loadArtistProfiles() {
+    try {
+      if(typeof SCRIPT_URL==='undefined'||SCRIPT_URL==='YOUR_APPS_SCRIPT_URL_HERE'){
+        allArtistProfiles=DEMO_ARTISTS;
+      } else {
+        const res=await fetch(SCRIPT_URL+'?action=getArtistProfiles');
+        const json=await res.json();
+        allArtistProfiles=(json.success&&json.artists&&json.artists.length)?json.artists:DEMO_ARTISTS;
+      }
+    } catch(e){allArtistProfiles=DEMO_ARTISTS;}
+    const loadEl=document.getElementById('artistsLoading');
+    if(loadEl)loadEl.style.display='none';
+    if(!allArtistProfiles.length){
+      const emEl=document.getElementById('artistsEmpty');
+      if(emEl)emEl.style.display='block';
+      return;
+    }
+    renderArtistProfiles(allArtistProfiles);
+  }
+
+  function renderArtistProfiles(profiles) {
+    const grid=document.getElementById('artistsGrid');
+    const heroGrid=document.getElementById('heroArtistsGrid');
+    if(!grid)return;
+    grid.innerHTML='';
+    if(heroGrid)heroGrid.innerHTML='';
+    profiles.forEach((artist,i)=>{
+      const dn=artist.credit==='anon'?'Anonymous Artist':artist.credit==='first'?(artist.name||'').split(' ')[0]:artist.name;
+      const artHtml=artist.portfolio?'<img src="'+artist.portfolio+'" alt="'+escHtml(dn)+'" onerror="this.style.display='none'">':'<div class="artist-artwork-placeholder"><span>&#9678;</span>'+escHtml(artist.medium||'Visual Art')+'</div>';
+      const heroArtHtml=artist.portfolio?'<img src="'+artist.portfolio+'" alt="'+escHtml(dn)+'" onerror="this.style.display='none'">':'<span style="font-size:1.5rem;opacity:0.25">&#9678;</span>';
+      const card=document.createElement('div');
+      card.className='artist-card reveal tilt-card';
+      card.innerHTML='<div class="artist-artwork">'+artHtml+'<span class="artist-tag">Neurodivergent Artist</span></div><div class="artist-body"><div class="artist-name">'+escHtml(dn)+'</div><div class="artist-condition">'+escHtml(artist.condition||'')+'</div><div class="artist-bio">'+escHtml(artist.bio||'')+'</div><div class="artist-meta"><span class="artist-location">&#128205; '+escHtml(artist.location||'')+'</span><span class="artist-medium">'+escHtml(artist.medium||'')+'</span></div><button class="artist-view-btn" onclick="openArtistModal('+i+')">View Full Profile</button></div>';
+      grid.appendChild(card);
+      if(i<4&&heroGrid){
+        const hc=document.createElement('div');
+        hc.className='hero-artist-card';
+        hc.onclick=()=>{location.href='#artists';};
+        hc.innerHTML='<div class="hac-artwork">'+heroArtHtml+'</div><div class="hac-name">'+escHtml(dn)+'</div><div class="hac-type">'+escHtml(artist.condition||'')+'</div>';
+        heroGrid.appendChild(hc);
+      }
+    });
+  }
+
+  function openArtistModal(idx) {
+    const artist=allArtistProfiles[idx];
+    if(!artist)return;
+    const dn=artist.credit==='anon'?'Anonymous Artist':artist.credit==='first'?(artist.name||'').split(' ')[0]:artist.name;
+    const modal=document.getElementById('artistModal');
+    document.getElementById('artistModalArtwork').innerHTML=artist.portfolio?'<img src="'+artist.portfolio+'" alt="'+escHtml(dn)+'" onerror="this.style.display='none'">':'<span style="font-size:2rem;opacity:0.3">&#9678;</span>';
+    document.getElementById('artistModalContent').innerHTML='<div class="artist-modal-name">'+escHtml(dn)+'</div><div class="artist-modal-condition">'+escHtml(artist.condition||'')+'</div><div class="artist-modal-meta"><div><div class="artist-modal-meta-label">Medium</div><div class="artist-modal-meta-val">'+escHtml(artist.medium||'&mdash;')+'</div></div><div><div class="artist-modal-meta-label">Location</div><div class="artist-modal-meta-val">'+escHtml(artist.location||'&mdash;')+'</div></div><div><div class="artist-modal-meta-label">Years Creating</div><div class="artist-modal-meta-val">'+escHtml(artist.years||'&mdash;')+'</div></div>'+(artist.instagram?'<div><div class="artist-modal-meta-label">Instagram</div><div class="artist-modal-meta-val">'+escHtml(artist.instagram)+'</div></div>':'')+'</div><div class="artist-modal-bio">'+escHtml(artist.bio||'')+'</div>'+(artist.portfolio?'<a href="'+escHtml(artist.portfolio)+'" target="_blank" rel="noopener" class="btn btn-outline" style="font-size:0.76rem;padding:8px 18px">View Artwork Portfolio &rarr;</a>':'');
+    modal.style.display='flex';
+    document.body.style.overflow='hidden';
+  }
+
+  function closeArtistModal() {
+    document.getElementById('artistModal').style.display='none';
+    document.body.style.overflow='';
+  }
+
+  (function(){
+    const form=document.getElementById('artistProfileForm');
+    if(!form)return;
+    form.addEventListener('submit',async function(e){
+      e.preventDefault();
+      const btn=form.querySelector('[type=submit]');
+      const sEl=document.getElementById('artistFormSuccess');
+      const eEl=document.getElementById('artistFormError');
+      btn.disabled=true;btn.textContent='Submitting…';
+      sEl.style.display='none';eEl.style.display='none';
+      try{
+        const data={};new FormData(form).forEach((v,k)=>data[k]=v);data.action='submitArtistProfile';
+        if(typeof SCRIPT_URL==='undefined'||SCRIPT_URL==='YOUR_APPS_SCRIPT_URL_HERE'){sEl.style.display='block';form.reset();}
+        else{
+          const res=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify(data)});
+          const json=await res.json();
+          if(json.success){sEl.style.display='block';form.reset();}
+          else throw new Error(json.error||'error');
+        }
+      }catch(err){eEl.style.display='block';}
+      finally{btn.disabled=false;btn.textContent='Submit Profile for Review →';}
+    });
+  })();
+
+
+  loadArtistProfiles();
   observeAll();
 
   const revealMutObserver = new MutationObserver(observeAll);
