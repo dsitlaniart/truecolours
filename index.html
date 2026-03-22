@@ -1872,13 +1872,14 @@ function renderAdminData() {
   document.getElementById('stat-donations').textContent = d.donations.length;
 
   // Submissions table
-  const subCols = ['Timestamp','Status','Type','Name','Email','Institution','Title','Medium','Dims','Starting ₹','Current ₹','Bids','Images','Auction End','Actions'];
+  const subCols = ['Timestamp','Status','Type','Name','Email','Institution','Title','Medium','Dims','Starting ₹','Current ₹','Bids','Description','Notes','City/Country','Year/Role','Guardian Consent','Images','Auction End','Actions'];
   renderTable('subTable', subCols, d.submissions.map(s => {
     const imageCell = buildImageCell(s.driveFolderUrl, s.imageLinks);
     return [
       s.timestamp, statusPill(s.status), s.artistType, s.fullName, s.email,
       s.institution || s.cityCountry, s.artworkTitle, s.medium, s.dimensions,
       '₹' + (s.startingBid || '—'), '₹' + (s.currentBid || '—'), s.bidCount || 0,
+      s.description || '—', s.notes || '—', s.cityCountry || '—', s.roleYear || '—', s.guardianConsent || '—',
       imageCell,
       s.auctionEnd ? `<input type="datetime-local" class="timer-input" value="${toDatetimeLocal(s.auctionEnd)}" onchange="setTimer(${s.row},this.value)">` : `<input type="datetime-local" class="timer-input" onchange="setTimer(${s.row},this.value)">`,
       `<button class="admin-action-btn approve" onclick="updateStatus(${s.row},'Approved')">Approve</button><button class="admin-action-btn live" onclick="updateStatus(${s.row},'Live')">Go Live</button><button class="admin-action-btn reject" onclick="updateStatus(${s.row},'Rejected')">Reject</button><button class="admin-action-btn close" onclick="updateStatus(${s.row},'Closed')">Close</button>`
