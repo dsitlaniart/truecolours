@@ -788,9 +788,9 @@ const ADMIN_PASS_KEY = 'truecolours2025'; // Must match Apps Script
     </div>
   </div>
   <div class="hero-right">
-    <p class="hero-right-title"><a href="#artists" style="color:var(--ink);text-decoration:none">Neurodivergent Artists</a></p>
-    <div id="heroArtists">
-      <div id="heroArtistsGrid" class="hero-artists-grid">
+    <p class="hero-right-title"><a href="#auctions" style="color:var(--ink);text-decoration:none">Live Auctions</a></p>
+    <div id="heroAuctions">
+      <div id="heroAuctionsInner" class="hero-artists-grid">
         <div style="text-align:center;padding:40px 0;color:var(--muted);font-size:0.82rem;grid-column:1/-1">Profiles coming soon.<br>Be the first to share your story.</div>
       </div>
     </div>
@@ -1881,7 +1881,7 @@ function renderAdminData() {
       '₹' + (s.startingBid || '—'), '₹' + (s.currentBid || '—'), s.bidCount || 0,
       s.description || '—', s.notes || '—', s.cityCountry || '—', s.roleYear || '—', s.guardianConsent || '—',
       imageCell,
-      s.auctionEnd ? `<input type="datetime-local" class="timer-input" value="${toDatetimeLocal(s.auctionEnd)}" onchange="setTimer(${s.row},this.value)">` : `<input type="datetime-local" class="timer-input" onchange="setTimer(${s.row},this.value)">`,
+      s.auctionEnd ? `<input type="datetime-local" class="timer-input" value="${toDatetimeLocal(s.auctionEnd)}" onchange="setTimer(${s.row},this.value)">` : `<input type="datetime-local" class="timer-input" value="${toDatetimeLocal(new Date(Date.now()+21*24*60*60*1000).toISOString())}" onchange="setTimer(${s.row},this.value)">`,
       `<button class="admin-action-btn approve" onclick="updateStatus(${s.row},'Approved')">Approve</button><button class="admin-action-btn live" onclick="updateStatus(${s.row},'Live')">Go Live</button><button class="admin-action-btn reject" onclick="updateStatus(${s.row},'Rejected')">Reject</button><button class="admin-action-btn close" onclick="updateStatus(${s.row},'Closed')">Close</button>`
     ];
   }));
@@ -1933,7 +1933,11 @@ async function updateStatus(row, status) {
   if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') { alert('Connect Apps Script first.'); return; }
   try {
     await fetch(`${SCRIPT_URL}?action=updateStatus&password=${ADMIN_PASS_KEY}&row=${row}&status=${encodeURIComponent(status)}`);
-    await loadAdminData();
+    if (status === 'Live') {
+      const threeWeeks = new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toISOString().replace('T',' ').substring(0,16);
+      await setTimer(row, threeWeeks);
+    }
+        await loadAdminData();
     await loadAuctions();
   } catch(e) { alert('Failed to update: ' + e.message); }
 }
